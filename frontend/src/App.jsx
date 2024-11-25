@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";  // Import Navigate for redirection
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import Home from "./pages/Home";
 import MainLayout from "./components/layouts/MainLayout";
@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Settings from "./pages/Settings";
 import { useAuth } from "./store/useAuth";
 import Loading from "./components/ui/Loading";
+import { Toaster } from "@/components/ui/toaster";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuth();
@@ -23,6 +24,7 @@ const App = () => {
 
   return (
     <>
+    <div>
       <Routes>
         {/* Signup route: Only accessible if the user is not logged in */}
         <Route 
@@ -57,7 +59,10 @@ const App = () => {
           path="/settings" 
           element={authUser ? <MainLayout><Settings /></MainLayout> : <Navigate to="/login" />} 
         />
+        
       </Routes>
+    <Toaster />
+    </div>
     </>
   );
 };
