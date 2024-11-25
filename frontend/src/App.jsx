@@ -19,7 +19,7 @@ const App = () => {
 
   if (isCheckingAuth) {
     return <Loading />;
-  }
+  };
 
   return (
     <>
@@ -27,13 +27,13 @@ const App = () => {
         {/* Signup route: Only accessible if the user is not logged in */}
         <Route 
           path="/signup" 
-          element={!authUser ? <MainLayout><SignUp /></MainLayout> : <Navigate to="/" />} 
+          element={!authUser ? <SignUp /> : <Navigate to="/" />} 
         />
 
         {/* Login route: Accessible to all users */}
         <Route 
           path="/login" 
-          element={<MainLayout><Login /></MainLayout>} 
+          element={<Login />} 
         />
 
         {/* Home route: Only accessible if logged in */}
