@@ -16,39 +16,47 @@ import Greetings from "@/components/layouts/Greetings";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: "",
+    identifier: "", // Can be email, username, or phone number
     password: "",
-  });
+  });  
 
   const { login, isLoggingIn } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  login(formData);
-};
-
-// const handleSubmit = async (e) => {
-//   e.preventDefault();
-
-//   try {
-//     const user = await login(formData);
-//     toast({
-//       variant: "success",
-//       title: "Login Successful",
-//       description: `Welcome back, ${user.fullName || "User"}!`,
-//     });
-//     navigate("/");
-//   } catch {
-//     toast({
-//       variant: "destructive",
-//       title: "Invalid Credentials",
-//       description: "The email or password you entered is incorrect.",
-//     });
-//   }
-// }; 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const { identifier, password } = formData;
+  
+    // Determine if identifier is email, username, or phone number
+    let loginData = { password };
+  
+    if (identifier.includes("@")) {
+      loginData.email = identifier;
+    } else if (/^\d+$/.test(identifier)) {
+      loginData.phoneNumber = identifier;
+    } else {
+      loginData.userName = identifier;
+    }
+  
+    try {
+      const user = await login(loginData);
+      toast({
+        variant: "success",
+        title: "Login Successful",
+        description: `Welcome back, ${user.fullName || "User"}!`,
+      });
+      navigate("/");
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Invalid Credentials",
+        description: "The credentials you entered are incorrect.",
+      });
+    }
+  };
+  
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -90,17 +98,20 @@ const handleSubmit = async (e) => {
           <div className="w-full">
             <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
               <div className="grid items-start gap-1.5">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="identifier">
+                Identifier
+                </Label>
                 <Input
                   className="rounded-full border-collapse focus-visible:ring-0 focus-visible:ring-offset-0 border-gray-500"
-                  type="email"
-                  id="email"
-                  placeholder="Enter your email"
+                  type="text"
+                  id="identifier"
+                  placeholder="Email | username | phone number"
                   onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
+                    setFormData({ ...formData, identifier: e.target.value })
                   }
                 />
               </div>
+
               <div className="grid items-start gap-1.5 relative">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -162,3 +173,23 @@ const handleSubmit = async (e) => {
 };
 
 export default Login;
+
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   try {
+//     const user = await login(formData);
+//     toast({
+//       variant: "success",
+//       title: "Login Successful",
+//       description: `Welcome back, ${user.fullName || "User"}!`,
+//     });
+//     navigate("/");
+//   } catch {
+//     toast({
+//       variant: "destructive",
+//       title: "Invalid Credentials",
+//       description: "The email or password you entered is incorrect.",
+//     });
+//   }
+// };

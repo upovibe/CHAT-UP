@@ -39,19 +39,22 @@ export const useAuth = create((set) => ({
     }
   },
 
-  // Login method
-  login: async (data) => {
-    set({ isLoggingIn: true });
+  login: async (loginData) => {
     try {
-      const res = await axiosInstance.post("/auth/login", data);
-      set({ authUser: res.data.user });
+      set({ isLoggingIn: true });
+      const res = await axiosInstance.post("/auth/login", loginData);
+      if (res.data.user) {
+        set({ authUser: res.data.user });
+        return res.data.user; // Return user object for further use
+      }
+      throw new Error("Login failed");
     } catch (e) {
       console.error("Login failed:", e.message);
-      throw e;
+      throw e; // Ensure error is thrown and caught in the component
     } finally {
       set({ isLoggingIn: false });
     }
-  },
+  },  
 
   // Logout method
   logout: async () => {
