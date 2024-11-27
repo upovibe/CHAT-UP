@@ -82,6 +82,8 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
 
+    generateToken(newUser._id, res);
+
     return res.status(201).json({
       _id: newUser._id,
       fullName: newUser.fullName,
@@ -147,13 +149,15 @@ export const logout = (req, res) => {
     res.clearCookie("jwt", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict", 
+      sameSite: "Strict",
     });
 
     return res.status(200).json({ message: "Logout successful" });
   } catch (err) {
     console.error("Error during logout:", err.message);
-    return res.status(500).json({ message: "Internal server error during logout" });
+    return res
+      .status(500)
+      .json({ message: "Internal server error during logout" });
   }
 };
 
@@ -192,7 +196,9 @@ export const updateProfile = async (req, res) => {
 
       if (urlError) {
         console.error("Error generating public URL:", urlError.message);
-        return res.status(500).json({ message: "Failed to generate avatar URL." });
+        return res
+          .status(500)
+          .json({ message: "Failed to generate avatar URL." });
       }
 
       // Update the user's avatar in the database
@@ -216,7 +222,9 @@ export const updateProfile = async (req, res) => {
     return res.status(400).json({ message: "No avatar provided for update." });
   } catch (err) {
     console.error("Error during profile update:", err.message);
-    res.status(500).json({ message: "Internal server error during profile update." });
+    res
+      .status(500)
+      .json({ message: "Internal server error during profile update." });
   }
 };
 
@@ -224,22 +232,22 @@ export const updateProfile = async (req, res) => {
 export const checkAuth = (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Unauthorized access. User not authenticated." 
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized access. User not authenticated.",
       });
     }
 
-    return res.status(200).json({ 
-      success: true, 
-      message: "User authenticated successfully.", 
-      user: req.user 
+    return res.status(200).json({
+      success: true,
+      message: "User authenticated successfully.",
+      user: req.user,
     });
   } catch (err) {
     console.error("Error during authentication check:", err.message);
-    return res.status(500).json({ 
-      success: false, 
-      message: "Internal server error during authentication check." 
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error during authentication check.",
     });
   }
 };

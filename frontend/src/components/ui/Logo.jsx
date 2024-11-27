@@ -8,11 +8,11 @@ const Logo = () => {
       <img
         src={LogoImage}
         alt="Logo"
-        className="block size-10"
+        className="block size-9"
       />
 
       {/* Text "CHAT-UP" for larger screens */}
-      <span className="hidden sm:block text-2xl font-bold text-black/70">CHAT-UP</span>
+      <span className="hidden sm:block font-extrabold text-gray-800">CHAT-UP</span>
     </div>
   );
 };

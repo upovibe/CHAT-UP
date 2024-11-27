@@ -7,7 +7,16 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'), // Make sure the alias points to the src directory
+      '@': path.resolve(__dirname, 'src'), // Alias for src directory
     },
   },
-})
+  // server: {
+  //   proxy: {
+  //     '/api': {
+  //       target: 'http://localhost:5001', // Backend server URL
+  //       changeOrigin: true,
+  //       secure: false,
+  //     },
+  //   },
+  // },
+});

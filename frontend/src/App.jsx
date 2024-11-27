@@ -35,7 +35,7 @@ const App = () => {
         {/* Login route: Accessible to all users */}
         <Route 
           path="/login" 
-          element={<Login />} 
+          element={!authUser  ? <Login /> : <Navigate to="/" />} 
         />
 
         {/* Home route: Only accessible if logged in */}
