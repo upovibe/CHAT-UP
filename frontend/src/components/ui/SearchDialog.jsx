@@ -32,7 +32,7 @@ const SearchDialog = () => {
   return (
     <div>
       <Dialog>
-        <DialogTrigger className="flex items-center justify-between bg-gray-100 py-[3px] px-5 text-xs md:text-base text-gray-500 rounded-md border-2 border-gray-400/50">
+        <DialogTrigger className="flex items-center justify-between bg-gray-100 py-[3px] pl-1 pr-6 text-xs md:text-sm text-gray-500 rounded-md border-2 border-gray-400/50 gap-2">
           <Search className="mr-2 size-4" />
           Search new friends...
         </DialogTrigger>
