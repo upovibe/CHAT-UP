@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { truncateText } from "@/utils/truncateText";
+import Filter from "./Filter";
 
 const FriendList = ({ isSidebarExpanded, onProfileClick }) => {
   const longText =
@@ -20,15 +21,24 @@ const FriendList = ({ isSidebarExpanded, onProfileClick }) => {
         </h2>
         <Contact className="size-5 text-gray-500" />
       </div>
+      <Filter/>
       <ul className="space-y-3">
         <li
           onClick={onProfileClick}
           className="p-4 flex items-center gap-2 cursor-pointer border-r-4 border-transparent hover:border-r-blue-600 transition-all ease-linear duration-200 border-b border-b-gray-200 hover:bg-blue-50/30"
         >
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <Badge
+              className="absolute -top-1 -right-1 lg:hidden"
+              variant="destructive"
+            >
+              5
+            </Badge>
+          </div>
           {/* The following wrapper will hide all content except the avatar on sm and md screens */}
           <div className="hidden lg:flex flex-col items-start gap-1">
             <h3 className="font-bold whitespace-nowrap leading-none">

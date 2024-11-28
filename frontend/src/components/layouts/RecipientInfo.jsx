@@ -6,7 +6,7 @@ const RecipientInfo = ({ isVisible, onClose }) => {
     <>
       {/* Overlay - On Small/Medium screens */}
       <div
-        className={`fixed top-0 right-0 w-full md:w-1/3 h-full border-l-2 p-4 z-40 transform transition-transform duration-300 ease-out 
+        className={`fixed top-0 right-0 w-full md:w-2/3 h-full border-l-2 p-4 z-40 transform transition-transform duration-300 ease-out 
           ${isVisible ? "translate-x-0 animate-slideIn bg-white" : "translate-x-full animate-slideOut bg-white"}
           sm:block md:block lg:hidden`}
       >
