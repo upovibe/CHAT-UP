@@ -1,13 +1,11 @@
-import Navabr from './Navabr'
+import Navabr from "./Navabr";
 
 function Header() {
   return (
-    <>
-    <header className='w-full border-b-2'>
+    <header className="w-full border-b-2">
       <Navabr />
     </header>
-    </>
-  )
+  );
 }
 
-export default Header
+export default Header;

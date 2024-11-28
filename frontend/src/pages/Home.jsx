@@ -20,7 +20,7 @@ const Home = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-full">
       {/* Sidebar */}
       <Sidebar isSidebarExpanded={isSidebarExpanded} toggleSidebar={toggleSidebar} />
 

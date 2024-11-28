@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { ChevronLeft, ChevronRight, SidebarClose, SidebarOpen } from "lucide-react";
+import { SidebarClose, SidebarOpen } from "lucide-react";
 
 const Sidebar = ({ isSidebarExpanded, toggleSidebar }) => {
   return (
@@ -16,7 +16,7 @@ const Sidebar = ({ isSidebarExpanded, toggleSidebar }) => {
         Sidebar
       </h2>
       <div
-        className={`h-full flex flex-col ${
+        className={`flex flex-col ${
           isSidebarExpanded ? "block" : "hidden md:block"
         }`}
       >
