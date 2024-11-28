@@ -25,7 +25,7 @@ const RecipientInfo = ({ isVisible, onClose }) => {
       <div
         className={`${
           isVisible ? "block" : "hidden"
-        } w-4/12 xl:w-3/12 2xl:w-2/12 border-l-2 p-4 lg:block sm:hidden md:hidden transition-all duration-300 ease-in-out`}
+        } w-4/12 md:w-3/12 border-l-2 p-4 lg:block sm:hidden md:hidden transition-all duration-300 ease-in-out`}
       >
         <h2 className="text-sm md:text-lg font-bold">Recipient Info</h2>
         <p className="mt-2">Details about the recipient</p>
