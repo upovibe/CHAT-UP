@@ -9,12 +9,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  BellDotIcon,
   LogOut,
   User,
   MessageCircle,
   Clipboard,
   Settings,
+  BellIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import SearchDialog from "../ui/SearchDialog";
@@ -31,12 +31,11 @@ const Profile = () => {
         className="flex items-center text-gray-700 hover:text-blue-600 font-bold transition-all ease-linear duration-200"
       >
         <div className="flex relative">
-          <BellDotIcon className="size-5" />
+          <BellIcon className="size-5" />
           <Badge
-            className="absolute -top-2 -right-2 px-[6px] size-5"
+            className="absolute top-0 right-0 px-[3px] size-2"
             variant="destructive"
           >
-            2
           </Badge>
         </div>
       </Link>
