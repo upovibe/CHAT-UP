@@ -22,10 +22,10 @@ export const useAuth = create((set) => ({
   },
 
   // Signup method
-  signup: async (data) => {
+  signup: async (SignupData) => {
     try {
       set({ isSigingUp: true });
-      const res = await axiosInstance.post("/auth/signup", data);
+      const res = await axiosInstance.post("/auth/signup", SignupData);
       if (res.data.user) {
         set({ authUser: res.data.user });
       } else {
@@ -43,18 +43,21 @@ export const useAuth = create((set) => ({
     try {
       set({ isLoggingIn: true });
       const res = await axiosInstance.post("/auth/login", loginData);
+  
       if (res.data.user) {
         set({ authUser: res.data.user });
-        return res.data.user; // Return user object for further use
+        return res.data.user;
       }
-      throw new Error("Login failed");
+  
+      // throw new Error("Unexpected response format");
     } catch (e) {
-      console.error("Login failed:", e.message);
-      throw e; // Ensure error is thrown and caught in the component
+      console.error("Login error:", e.response?.data || e.message);
+      throw e;
     } finally {
       set({ isLoggingIn: false });
     }
-  },  
+  },
+  
 
   // Logout method
   logout: async () => {
@@ -86,21 +89,3 @@ export const useAuth = create((set) => ({
     }
   },
 }));
-
-//  login: async (data) => {
-//   try {
-//     set({ isLoggingIn: true });
-//     const res = await axiosInstance.post("/auth/login", data);
-//     if (res.data.user) {
-//       set({ authUser: res.data.user });
-//     } else {
-//       console.error("Login failed: No user found");
-//       throw new Error("Login failed: No user found");
-//     }
-//   } catch (e) {
-//     console.error("Login failed:", e.message);
-//     throw e;
-//   } finally {
-//     set({ isLoggingIn: false });
-//   }
-// },

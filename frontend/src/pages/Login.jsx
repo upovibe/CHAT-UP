@@ -24,12 +24,13 @@ const Login = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
     const { identifier, password } = formData;
   
-    // Determine if identifier is email, username, or phone number
     let loginData = { password };
   
     if (identifier.includes("@")) {
@@ -47,6 +48,7 @@ const Login = () => {
         title: "Login Successful",
         description: `Welcome back, ${user.fullName || "User"}!`,
       });
+      
       navigate("/");
     } catch {
       toast({
@@ -55,8 +57,7 @@ const Login = () => {
         description: "The credentials you entered are incorrect.",
       });
     }
-  };
-  
+  };  
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -173,23 +174,3 @@ const Login = () => {
 };
 
 export default Login;
-
-// const handleSubmit = async (e) => {
-//   e.preventDefault();
-
-//   try {
-//     const user = await login(formData);
-//     toast({
-//       variant: "success",
-//       title: "Login Successful",
-//       description: `Welcome back, ${user.fullName || "User"}!`,
-//     });
-//     navigate("/");
-//   } catch {
-//     toast({
-//       variant: "destructive",
-//       title: "Invalid Credentials",
-//       description: "The email or password you entered is incorrect.",
-//     });
-//   }
-// };
