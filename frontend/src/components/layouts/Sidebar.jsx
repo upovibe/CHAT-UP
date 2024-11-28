@@ -10,7 +10,7 @@ const Sidebar = ({ isSidebarExpanded, toggleSidebar }) => {
   return (
     <div
       className={`transition-all duration-300 p-0 border-r-2 ${
-        isSidebarExpanded ? "w-8/12 sm:w-6/12 md:w-4/12" : "w-0 md:w-4/12 lg:w-3/12 xl:w-2/12"
+        isSidebarExpanded ? "w-full" : "w-0 md:w-4/12 lg:w-3/12 xl:w-2/12"
       }`}
     >
       <div
