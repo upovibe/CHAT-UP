@@ -9,7 +9,6 @@ import {
   FileText,
   Images,
   Link,
-  Send,
   SendHorizonal,
   Smile,
 } from "lucide-react";
@@ -26,9 +25,9 @@ const ChatBox = ({ isSidebarExpanded }) => {
   return (
     <>
       {!isSidebarExpanded && (
-        <div className="flex flex-col mx-auto w-full max-w-[800px] relative">
+        <div className="flex flex-col w-full lg:w-8/12 relative">
           {/* Header */}
-          <div className="py-[0.64rem] px-4 border-b-2 flex items-center justify-between">
+          <div className="py-[0.64rem] px-4 md:p-3 lg:px-4 lg:py-[0.63rem] border-b-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Avatar className="hidden lg:block">
                 <AvatarImage
