@@ -58,6 +58,16 @@ function ProfileInfo() {
         <AccordionItem value="item-1" className="px-4">
           <AccordionTrigger>Contact</AccordionTrigger>
           <AccordionContent className="flex flex-col gap-2">
+            {/* Email */}
+            <div className="flex items-start gap-4">
+              <div className="text-gray-500 flex items-start gap-1 font-semibold w-24">
+                <Mail className="size-4" />
+                <span>Email</span>
+              </div>
+              <p className="font-bold text-gray-800">
+                {email || "Not provided"}
+              </p>
+            </div>
             {/* Username */}
             <div className="flex items-start gap-4">
               <div className="text-gray-500 flex items-start gap-1 font-semibold w-24">
@@ -76,17 +86,6 @@ function ProfileInfo() {
               </div>
               <p className="font-bold text-gray-800">
                 {phoneNumber || "Not provided"}
-              </p>
-            </div>
-
-            {/* Email */}
-            <div className="flex items-start gap-4">
-              <div className="text-gray-500 flex items-start gap-1 font-semibold w-24">
-                <Mail className="size-4" />
-                <span>Email</span>
-              </div>
-              <p className="font-bold text-gray-800">
-                {email || "Not provided"}
               </p>
             </div>
 
