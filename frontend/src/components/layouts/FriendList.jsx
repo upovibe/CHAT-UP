@@ -27,7 +27,7 @@ const FriendList = ({ isSidebarExpanded, onProfileClick }) => {
           onClick={onProfileClick}
           className="p-4 flex items-center gap-2 cursor-pointer border-r-4 border-transparent hover:border-r-blue-600 transition-all ease-linear duration-200 border-b border-b-gray-200 hover:bg-blue-50/30"
         >
-          <div className="relative">
+          <div className="relative mr-4 sm:m-0 ">
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               <AvatarFallback>CN</AvatarFallback>

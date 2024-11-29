@@ -9,9 +9,9 @@ import {
   
   const Filter = () => {
     return (
-      <div className="p-4 border-b flex items-center justify-between">
+      <div className="p-4 border-b  lg:flex items-center justify-between hidden">
         {/* Left dropdown: Display options (hidden on smaller screens) */}
-        <div className="hidden lg:block">
+        <div className="">
           <Select>
             <SelectTrigger className="w-fit focus-visible:ring-0 focus-visible:ring-offset-0">
               <SelectValue placeholder="Display" />
