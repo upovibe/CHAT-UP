@@ -8,15 +8,14 @@ import {
 } from "@/components/ui/accordion";
 import { useAuth } from "@/store/useAuth";
 import { format } from "date-fns";
+import Loading from "./components/ui/Loading";
 
 function ProfileInfo() {
   const { authUser } = useAuth();
 
   if (!authUser) {
     return (
-      <div className="p-4 text-center text-gray-500">
-        <p>Loading profile...</p>
-      </div>
+      <Loading />
     );
   }
 
@@ -64,14 +63,17 @@ function ProfileInfo() {
                 <Mail className="size-4" />
                 <span>Email</span>
               </div>
-              <p className="font-bold text-gray-800">
+              <a
+                href={`mailto:${email}`}
+                className="font-bold text-gray-800 hover:underline"
+              >
                 {email || "Not provided"}
-              </p>
+              </a>
             </div>
             {/* Username */}
             <div className="flex items-start gap-4">
               <div className="text-gray-500 flex items-start gap-1 font-semibold w-24">
-                <Mail className="size-4" />
+                <User className="size-4" />
                 <span>Username</span>
               </div>
               <p className="font-bold text-gray-800">
@@ -84,9 +86,12 @@ function ProfileInfo() {
                 <Phone className="size-4" />
                 <span>Phone</span>
               </div>
-              <p className="font-bold text-gray-800">
+              <a
+                href={`tel:${phoneNumber}`}
+                className="font-bold text-gray-800 hover:underline"
+              >
                 {phoneNumber || "Not provided"}
-              </p>
+              </a>
             </div>
 
             {/* Created At */}

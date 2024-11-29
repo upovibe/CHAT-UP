@@ -1,8 +1,10 @@
-import React from 'react'
+import EditProfile from "@/pages/edit/EditProfile";
 
 const Settings = () => {
   return (
-    <div>Settings</div>
+    <div>
+      <EditProfile/>
+    </div>
   )
 }
 

@@ -4,7 +4,6 @@ import Home from "./pages/Home";
 import MainLayout from "./components/layouts/MainLayout";
 import Friends from "./pages/Friends";
 import SignUp from "./pages/SignUp";
-import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Settings from "./pages/Settings";
 import { useAuth } from "./store/useAuth";
@@ -42,12 +41,6 @@ const App = () => {
         <Route 
           path="/" 
           element={authUser ? <MainLayout><Home /></MainLayout> : <Navigate to="/login" />} 
-        />
-
-        {/* Protected routes: Only accessible if logged in */}
-        <Route 
-          path="/profile" 
-          element={authUser ? <MainLayout><Profile /></MainLayout> : <Navigate to="/login" />} 
         />
         
         <Route 
