@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 import SearchDialog from "../ui/SearchDialog";
 import { useAuth } from "@/store/useAuth";
 
-const Profile = () => {
+const AuthBox = () => {
   const { logout, authUser } = useAuth();
 
   return (
@@ -57,10 +57,10 @@ const Profile = () => {
             {authUser?.fullName || "My Account"}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <Link to="/profile">
+          <Link to="/AuthBox">
             <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
               <User className="size-4" />
-              Profile
+              AuthBox
             </DropdownMenuItem>
           </Link>
           <div className="block lg:hidden">
@@ -97,4 +97,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default AuthBox;

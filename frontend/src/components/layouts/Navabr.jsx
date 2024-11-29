@@ -1,4 +1,4 @@
-import Profile from "@/components/layouts/Profile"
+import AuthBox from "@/components/layouts/AuthBox"
 import Logo from "@/components/ui/Logo";
 import NavList from "@/components/layouts/NavList";
 
@@ -13,7 +13,7 @@ const Navabr = () => {
           <NavList />
         </div>
         <div className="">
-          <Profile/>
+          <AuthBox/>
         </div>
       </nav>
     </>

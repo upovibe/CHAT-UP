@@ -162,13 +162,83 @@ export const logout = (req, res) => {
 };
 
 // Update Profile Logic
+// export const updateProfile = async (req, res) => {
+//   try {
+//     const { avatar } = req.body;
+//     const userId = req.user._id;
+
+//     if (avatar) {
+//       // Validate the avatar
+//       if (!validateAvatar(avatar)) {
+//         return res.status(400).json({ message: "Invalid avatar format." });
+//       }
+
+//       const fileName = `avatars/${userId}-${Date.now()}.png`;
+//       const buffer = Buffer.from(avatar.split(",")[1], "base64");
+
+//       // Upload the avatar to Supabase
+//       const { data, error } = await supabase.storage
+//         .from("avatars")
+//         .upload(fileName, buffer, {
+//           contentType: "image/png",
+//           upsert: true,
+//         });
+
+//       if (error) {
+//         console.error("Supabase upload error:", error.message);
+//         return res.status(500).json({ message: "Failed to upload avatar." });
+//       }
+
+//       // Generate a public URL for the uploaded avatar
+//       const { publicURL, error: urlError } = supabase.storage
+//         .from("avatars")
+//         .getPublicUrl(fileName);
+
+//       if (urlError) {
+//         console.error("Error generating public URL:", urlError.message);
+//         return res
+//           .status(500)
+//           .json({ message: "Failed to generate avatar URL." });
+//       }
+
+//       // Update the user's avatar in the database
+//       const updatedUser = await User.findByIdAndUpdate(
+//         userId,
+//         { avatar: publicURL },
+//         { new: true }
+//       ).select("-password");
+
+//       if (!updatedUser) {
+//         return res.status(404).json({ message: "User not found." });
+//       }
+
+//       return res.status(200).json({
+//         message: "Avatar updated successfully.",
+//         user: updatedUser,
+//       });
+//     }
+
+//     // If no avatar is provided, return an appropriate response
+//     return res.status(400).json({ message: "No avatar provided for update." });
+//   } catch (err) {
+//     console.error("Error during profile update:", err.message);
+//     res
+//       .status(500)
+//       .json({ message: "Internal server error during profile update." });
+//   }
+// };
+
+// Update Profile Logic
 export const updateProfile = async (req, res) => {
   try {
-    const { avatar } = req.body;
+    const { avatar, fullName, userName, phoneNumber, bio } = req.body;
     const userId = req.user._id;
 
+    // Collect fields to update
+    const updateData = {};
+
+    // Update avatar if provided
     if (avatar) {
-      // Validate the avatar
       if (!validateAvatar(avatar)) {
         return res.status(400).json({ message: "Invalid avatar format." });
       }
@@ -201,25 +271,69 @@ export const updateProfile = async (req, res) => {
           .json({ message: "Failed to generate avatar URL." });
       }
 
-      // Update the user's avatar in the database
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { avatar: publicURL },
-        { new: true }
-      ).select("-password");
-
-      if (!updatedUser) {
-        return res.status(404).json({ message: "User not found." });
-      }
-
-      return res.status(200).json({
-        message: "Avatar updated successfully.",
-        user: updatedUser,
-      });
+      updateData.avatar = publicURL;
     }
 
-    // If no avatar is provided, return an appropriate response
-    return res.status(400).json({ message: "No avatar provided for update." });
+    // Update other fields if provided
+    if (fullName) {
+      if (!validateFullName(fullName)) {
+        return res.status(400).json({ message: "Invalid full name format." });
+      }
+      updateData.fullName = fullName;
+    }
+
+    if (userName) {
+      if (!validateUsername(userName)) {
+        return res.status(400).json({ message: "Invalid username format." });
+      }
+      // Check if username already exists
+      const existingUsername = await User.findOne({
+        userName,
+        _id: { $ne: userId },
+      });
+      if (existingUsername) {
+        return res.status(400).json({ message: "Username already exists." });
+      }
+      updateData.userName = userName;
+    }
+
+    if (phoneNumber) {
+      if (!validatePhoneNumber(phoneNumber)) {
+        return res
+          .status(400)
+          .json({ message: "Invalid phone number format." });
+      }
+      // Check if phone number already exists
+      const existingPhone = await User.findOne({
+        phoneNumber,
+        _id: { $ne: userId },
+      });
+      if (existingPhone) {
+        return res
+          .status(400)
+          .json({ message: "Phone number already exists." });
+      }
+      updateData.phoneNumber = phoneNumber;
+    }
+
+    if (bio) {
+      updateData.bio = bio;
+    }
+
+    // Perform the update
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      select: "-password -email", // Exclude password and email
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    return res.status(200).json({
+      message: "Profile updated successfully.",
+      user: updatedUser,
+    });
   } catch (err) {
     console.error("Error during profile update:", err.message);
     res

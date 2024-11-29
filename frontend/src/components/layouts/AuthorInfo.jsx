@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import { SidebarClose } from "lucide-react";
-import Info from "./Info";
+import ProfileInfo from "./ProfileInfo";
 
-const AuthorInfo = ({ isVisible, onClose }) => {
+const AuthorProfileInfo = ({ isVisible, onClose }) => {
   return (
     <>
       {/* Overlay - On Small/Medium screens */}
@@ -18,7 +18,7 @@ const AuthorInfo = ({ isVisible, onClose }) => {
         >
           <SidebarClose className="size-3" />
         </button>
-        <Info />
+        <ProfileInfo />
       </div>
 
       {/* On Large screens, display as part of the layout */}
@@ -27,16 +27,16 @@ const AuthorInfo = ({ isVisible, onClose }) => {
           isVisible ? "block" : "hidden"
         } w-4/12 border-l-2 lg:block sm:hidden md:hidden transition-all duration-300 ease-in-out`}
       >
-        {/* Reusing Info Component */}
-        <Info />
+        {/* Reusing ProfileInfo Component */}
+        <ProfileInfo />
       </div>
     </>
   );
 };
 
-AuthorInfo.propTypes = {
+AuthorProfileInfo.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default AuthorInfo;
+export default AuthorProfileInfo;

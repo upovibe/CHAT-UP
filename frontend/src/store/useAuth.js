@@ -77,15 +77,18 @@ export const useAuth = create((set) => ({
   updateProfile: async (data) => {
     try {
       set({ isUpdatingProfile: true });
-      const res = await axiosInstance.patch("/auth/profile", data);
-      if (res.data.user) {
+      const res = await axiosInstance.put("/auth/update-profile", data);
+      if (res.data?.user) {
         set({ authUser: res.data.user });
+      } else {
+        console.warn("Update profile succeeded, but no user data returned.");
       }
     } catch (e) {
-      console.error("Update profile failed:", e.message);
-      throw e;
+      console.error("Update profile error:", e.response?.data?.message || e.message);
+      throw new Error(e.response?.data?.message || "Failed to update profile.");
     } finally {
       set({ isUpdatingProfile: false });
     }
   },
+  
 }));
