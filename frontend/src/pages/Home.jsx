@@ -2,7 +2,7 @@ import { useState } from "react";
 import Sidebar from "@/components/layouts/Sidebar";
 import FriendList from "@/components/layouts/FriendList";
 import ChatBox from "@/components/layouts/ChatBox";
-import RecipientInfo from "@/components/layouts/RecipientInfo";
+import AuthorInfo from "@/components/layouts/AuthorInfo";
 const Home = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isRecipientInfoVisible, setIsRecipientInfoVisible] = useState(false);
@@ -33,7 +33,7 @@ const Home = () => {
         <ChatBox isSidebarExpanded={isSidebarExpanded} />
 
         {/* Recipient Info - Visible on Small and Medium as Overlay, and Normal on Large */}
-        <RecipientInfo
+        <AuthorInfo
           isVisible={isRecipientInfoVisible}
           onClose={hideRecipientInfo}
         />

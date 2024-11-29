@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { SidebarClose } from "lucide-react";
 
-const RecipientInfo = ({ isVisible, onClose }) => {
+const AuthorInfo = ({ isVisible, onClose }) => {
   return (
     <>
       {/* Overlay - On Small/Medium screens */}
@@ -34,9 +34,9 @@ const RecipientInfo = ({ isVisible, onClose }) => {
   );
 };
 
-RecipientInfo.propTypes = {
+AuthorInfo.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default RecipientInfo;
+export default AuthorInfo;
