@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { useAuth } from "@/store/useAuth";
 import { format } from "date-fns";
-import Loading from "./components/ui/Loading";
+import Loading from "@/components/ui/Loading";
 
 function ProfileInfo() {
   const { authUser } = useAuth();

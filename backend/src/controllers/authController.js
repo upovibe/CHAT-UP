@@ -9,7 +9,7 @@ import {
   validatePhoneNumber,
   validateAvatar,
 } from "../utils/validators.js";
-import supabase from "../config/supabase.js";
+import cloudinary from "../config/cloudinary.js";
 
 // Signup logic
 export const signup = async (req, res) => {
@@ -161,120 +161,37 @@ export const logout = (req, res) => {
   }
 };
 
-// Update Profile Logic
-// export const updateProfile = async (req, res) => {
-//   try {
-//     const { avatar } = req.body;
-//     const userId = req.user._id;
-
-//     if (avatar) {
-//       // Validate the avatar
-//       if (!validateAvatar(avatar)) {
-//         return res.status(400).json({ message: "Invalid avatar format." });
-//       }
-
-//       const fileName = `avatars/${userId}-${Date.now()}.png`;
-//       const buffer = Buffer.from(avatar.split(",")[1], "base64");
-
-//       // Upload the avatar to Supabase
-//       const { data, error } = await supabase.storage
-//         .from("avatars")
-//         .upload(fileName, buffer, {
-//           contentType: "image/png",
-//           upsert: true,
-//         });
-
-//       if (error) {
-//         console.error("Supabase upload error:", error.message);
-//         return res.status(500).json({ message: "Failed to upload avatar." });
-//       }
-
-//       // Generate a public URL for the uploaded avatar
-//       const { publicURL, error: urlError } = supabase.storage
-//         .from("avatars")
-//         .getPublicUrl(fileName);
-
-//       if (urlError) {
-//         console.error("Error generating public URL:", urlError.message);
-//         return res
-//           .status(500)
-//           .json({ message: "Failed to generate avatar URL." });
-//       }
-
-//       // Update the user's avatar in the database
-//       const updatedUser = await User.findByIdAndUpdate(
-//         userId,
-//         { avatar: publicURL },
-//         { new: true }
-//       ).select("-password");
-
-//       if (!updatedUser) {
-//         return res.status(404).json({ message: "User not found." });
-//       }
-
-//       return res.status(200).json({
-//         message: "Avatar updated successfully.",
-//         user: updatedUser,
-//       });
-//     }
-
-//     // If no avatar is provided, return an appropriate response
-//     return res.status(400).json({ message: "No avatar provided for update." });
-//   } catch (err) {
-//     console.error("Error during profile update:", err.message);
-//     res
-//       .status(500)
-//       .json({ message: "Internal server error during profile update." });
-//   }
-// };
-
-// Update Profile Logic
+// Update Profile
 export const updateProfile = async (req, res) => {
   try {
     const { avatar, fullName, userName, phoneNumber, bio } = req.body;
     const userId = req.user._id;
 
-    // Collect fields to update
     const updateData = {};
 
-    // Update avatar if provided
+    // Validate and update avatar if provided
     if (avatar) {
       if (!validateAvatar(avatar)) {
         return res.status(400).json({ message: "Invalid avatar format." });
       }
 
-      const fileName = `avatars/${userId}-${Date.now()}.png`;
-      const buffer = Buffer.from(avatar.split(",")[1], "base64");
-
-      // Upload the avatar to Supabase
-      const { data, error } = await supabase.storage
-        .from("avatars")
-        .upload(fileName, buffer, {
-          contentType: "image/png",
-          upsert: true,
+      try {
+        // Upload avatar to Cloudinary
+        const result = await cloudinary.uploader.upload(avatar, {
+          folder: "avatars",
+          public_id: `${userId}-${Date.now()}`,
+          overwrite: true,
         });
 
-      if (error) {
-        console.error("Supabase upload error:", error.message);
+        // Update avatar URL in the user profile
+        updateData.avatar = result.secure_url;
+      } catch (error) {
+        console.error("Avatar upload to Cloudinary failed:", error.message);
         return res.status(500).json({ message: "Failed to upload avatar." });
       }
-
-      // Generate a public URL for the uploaded avatar
-      const { publicURL, error: urlError } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(fileName);
-
-      if (urlError) {
-        console.error("Error generating public URL:", urlError.message);
-        return res
-          .status(500)
-          .json({ message: "Failed to generate avatar URL." });
-      }
-
-      updateData.avatar = publicURL;
     }
 
-    // Update other fields if provided
+    // Validate and update fullName if provided
     if (fullName) {
       if (!validateFullName(fullName)) {
         return res.status(400).json({ message: "Invalid full name format." });
@@ -282,48 +199,31 @@ export const updateProfile = async (req, res) => {
       updateData.fullName = fullName;
     }
 
+    // Validate and update userName if provided
     if (userName) {
       if (!validateUsername(userName)) {
         return res.status(400).json({ message: "Invalid username format." });
       }
-      // Check if username already exists
-      const existingUsername = await User.findOne({
-        userName,
-        _id: { $ne: userId },
-      });
-      if (existingUsername) {
-        return res.status(400).json({ message: "Username already exists." });
-      }
       updateData.userName = userName;
     }
 
+    // Validate and update phoneNumber if provided
     if (phoneNumber) {
       if (!validatePhoneNumber(phoneNumber)) {
-        return res
-          .status(400)
-          .json({ message: "Invalid phone number format." });
-      }
-      // Check if phone number already exists
-      const existingPhone = await User.findOne({
-        phoneNumber,
-        _id: { $ne: userId },
-      });
-      if (existingPhone) {
-        return res
-          .status(400)
-          .json({ message: "Phone number already exists." });
+        return res.status(400).json({ message: "Invalid phone number format." });
       }
       updateData.phoneNumber = phoneNumber;
     }
 
+    // Update bio if provided (no validation for now)
     if (bio) {
       updateData.bio = bio;
     }
 
-    // Perform the update
+    // Update user in the database
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
-      select: "-password -email", // Exclude password and email
+      select: "-password -email",
     });
 
     if (!updatedUser) {
@@ -336,11 +236,10 @@ export const updateProfile = async (req, res) => {
     });
   } catch (err) {
     console.error("Error during profile update:", err.message);
-    res
-      .status(500)
-      .json({ message: "Internal server error during profile update." });
+    res.status(500).json({ message: "Internal server error during profile update." });
   }
 };
+
 
 // Check Authentication Logic
 export const checkAuth = (req, res) => {
