@@ -25,7 +25,7 @@ const AuthorProfileInfo = ({ isVisible, onClose }) => {
       <div
         className={`${
           isVisible ? "block" : "hidden"
-        } w-4/12 border-l-2 lg:block sm:hidden md:hidden transition-all duration-300 ease-in-out`}
+        } lg:w-6/12 xl:w-8/12 border-l-2 lg:block sm:hidden md:hidden transition-all duration-300 ease-in-out`}
       >
         {/* Reusing ProfileInfo Component */}
         <ProfileInfo />

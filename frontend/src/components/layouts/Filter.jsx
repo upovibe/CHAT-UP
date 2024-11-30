@@ -9,7 +9,7 @@ import {
   
   const Filter = () => {
     return (
-      <div className="p-4 border-b  lg:flex items-center justify-between hidden">
+      <div className="p-4 border-b flex items-center justify-between">
         {/* Left dropdown: Display options (hidden on smaller screens) */}
         <div className="">
           <Select>

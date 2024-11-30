@@ -1,6 +1,6 @@
 import FriendRequest from "../models/requestModel.js";
 import Message from "../models/messageModel.js";
-import supabase from "../config/supabase.js";
+// import supabase from "../config/supabase.js";
 import {
   validateAttachmentSize,
   validateAttachmentUrl,

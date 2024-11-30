@@ -3,40 +3,29 @@ import Sidebar from "@/components/layouts/Sidebar";
 import FriendList from "@/components/layouts/FriendList";
 import ChatBox from "@/components/layouts/ChatBox";
 import AuthorInfo from "@/components/layouts/AuthorInfo";
+
 const Home = () => {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isRecipientInfoVisible, setIsRecipientInfoVisible] = useState(false);
+  const [selectedContact, setSelectedContact] = useState(null);
 
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(!isSidebarExpanded);
-  };
-
-  const showRecipientInfo = () => {
-    setIsRecipientInfoVisible(true);
-  };
-
-  const hideRecipientInfo = () => {
-    setIsRecipientInfoVisible(false);
+  const handleContactListChat = (contact) => {
+    setSelectedContact(contact);
   };
 
   return (
     <div className="flex h-full">
       {/* Sidebar */}
-      <Sidebar isSidebarExpanded={isSidebarExpanded} toggleSidebar={toggleSidebar} />
+      <Sidebar />
 
       {/* Main Content */}
       <div className="flex-grow flex transition-all duration-300">
         {/* Friend List */}
-        <FriendList isSidebarExpanded={isSidebarExpanded} onProfileClick={showRecipientInfo} />
+        <FriendList onProfileClick={handleContactListChat} />
 
         {/* Chatbox */}
-        <ChatBox isSidebarExpanded={isSidebarExpanded} />
+        <ChatBox selectedContact={selectedContact} />
 
-        {/* Recipient Info - Visible on Small and Medium as Overlay, and Normal on Large */}
-        <AuthorInfo
-          isVisible={isRecipientInfoVisible}
-          onClose={hideRecipientInfo}
-        />
+        {/* Recipient Info */}
+        <AuthorInfo />
       </div>
     </div>
   );
