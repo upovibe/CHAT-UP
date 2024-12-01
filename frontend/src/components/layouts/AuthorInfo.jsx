@@ -8,12 +8,12 @@ const AuthorProfileInfo = ({ isVisible, onClose }) => {
       {/* Overlay - On Small/Medium screens */}
       <div
         className={`fixed top-0 right-0 w-full md:w-6/12 h-full border-l-2 z-[9999] transform transition-transform duration-300 ease-out 
-    ${
-      isVisible
-        ? "translate-x-0 animate-slideIn bg-white"
-        : "translate-x-full animate-slideOut bg-white"
-    }
-    sm:block md:block lg:hidden`}
+      ${
+        isVisible
+          ? "translate-x-0 animate-slideIn bg-white"
+          : "translate-x-full animate-slideOut bg-white"
+      }
+      sm:block md:block lg:hidden`}
       >
         {/* Close Button for Overlay */}
         <button
@@ -22,17 +22,18 @@ const AuthorProfileInfo = ({ isVisible, onClose }) => {
         >
           <SidebarClose className="size-3" />
         </button>
-        <ProfileInfo />
+        {/* Pass onClose here */}
+        <ProfileInfo onClose={onClose} />
       </div>
 
       {/* On Large screens, display as part of the layout */}
       <div
-        className={`${
+        className={`fixed top-0 right-0 lg:static lg:translate-x-0 transition-transform duration-300 ease-in-out ${
           isVisible ? "block" : "hidden"
-        } lg:w-6/12 xl:w-8/12 border-l-2 lg:block sm:hidden md:hidden transition-all duration-300 ease-in-out`}
+        } lg:w-6/12 xl:w-8/12 border-l-2`}
       >
-        {/* Reusing ProfileInfo Component */}
-        <ProfileInfo />
+        {/* ProfileInfo Component */}
+        <ProfileInfo onClose={onClose} />
       </div>
     </>
   );

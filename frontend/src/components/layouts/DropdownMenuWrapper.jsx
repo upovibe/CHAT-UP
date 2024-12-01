@@ -5,7 +5,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Icon } from "lucide-react";
 
 const DropdownMenuWrapper = ({ triggerElement, menuItems, className }) => {
   return (

@@ -1,4 +1,4 @@
-import { Calendar, Facebook, Mail, Phone, User } from "lucide-react";
+import { Calendar, Facebook, Mail, Phone, User, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Accordion,
@@ -9,8 +9,9 @@ import {
 import { useAuth } from "@/store/useAuth";
 import { format } from "date-fns";
 import Loading from "@/components/ui/Loading";
+import PropTypes from "prop-types";
 
-function ProfileInfo() {
+function ProfileInfo({ onClose }) {
   const { authUser } = useAuth();
 
   if (!authUser) {
@@ -25,7 +26,13 @@ function ProfileInfo() {
       {/* Header */}
       <div className="px-3 h-14 border-b-2 flex items-center justify-between">
         <h2 className="md:text-lg font-bold whitespace-nowrap">Profile Info</h2>
-        <User className="size-5 text-gray-500 hidden lg:block" />
+        {/* Close button for large screens */}
+        <button
+          onClick={onClose}
+          className="hidden lg:block p-1 border-gray-300 border-2 text-gray-400 rounded-full"
+        >
+          <X className="size-5 " />
+        </button>
       </div>
 
       {/* Scrollable Content */}
@@ -130,5 +137,9 @@ function ProfileInfo() {
     </div>
   );
 }
+
+ProfileInfo.propTypes = {
+  onClose: PropTypes.func.isRequired,
+};
 
 export default ProfileInfo;
