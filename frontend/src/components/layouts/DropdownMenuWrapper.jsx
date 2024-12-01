@@ -9,8 +9,11 @@ import {
 const DropdownMenuWrapper = ({ triggerElement, menuItems, className }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>{triggerElement}</DropdownMenuTrigger>
-      <DropdownMenuContent className={`absolute w-fit ${className || ""}`}>
+      {/* Ensure that the triggerElement is properly handled */}
+      <DropdownMenuTrigger asChild>
+        {triggerElement}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className={`w-fit ${className || ""}`}>
         {menuItems.map((item, index) => (
           <DropdownMenuItem
             key={index}

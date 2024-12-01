@@ -8,9 +8,8 @@ import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
 const ChatBoxHeader = ({ onClose, onProfileClick }) => {
 
   const triggerElement = (
-    <Button className="rounded-full size-8" variant="outline">
-      <EllipsisVertical />
-    </Button>
+      <EllipsisVertical className="rounded-full size-8 border-2 p-1"/>
+
   );
   
   const menuItems = [
@@ -75,7 +74,7 @@ const ChatBoxHeader = ({ onClose, onProfileClick }) => {
           <Check /> Mark As Read
         </Button>
         <DropdownMenuWrapper
-        className="right-0"
+        className="absolute right-0"
           triggerElement={triggerElement}
           menuItems={menuItems} 
         />

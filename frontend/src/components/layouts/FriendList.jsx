@@ -123,7 +123,7 @@ const FriendList = ({
               }`}
             >
               <DropdownMenuWrapper
-                className="left-0"
+                className="absolute left-0"
                 triggerElement={triggerElement(contact)}
                 menuItems={menuItems(contact)}
               />

@@ -17,7 +17,7 @@ import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/store/useAuth";
 
-const Sidebar = ({ isHidden, onClose, onProfileClick }) => {
+const Sidebar = ({ isHidden, onProfileClick }) => {
   const { authUser } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -189,7 +189,6 @@ const Sidebar = ({ isHidden, onClose, onProfileClick }) => {
 Sidebar.propTypes = {
   isHidden: PropTypes.bool,
   toggleSidebar: PropTypes.func,
-  onClose: PropTypes.func,
   onProfileClick: PropTypes.func,
 };
 

@@ -11,7 +11,7 @@ import { format } from "date-fns";
 import Loading from "@/components/ui/Loading";
 import PropTypes from "prop-types";
 
-function ProfileInfo({ onClose }) {
+const ProfileInfo = ({ onClose }) => {
   const { authUser } = useAuth();
 
   if (!authUser) {
@@ -59,7 +59,7 @@ function ProfileInfo({ onClose }) {
         </div>
 
         {/* Accordion for Additional Info */}
-        <Accordion className="" type="multiple" collapsible>
+        <Accordion type="multiple" collapsible="true">
           {/* Contact Section */}
           <AccordionItem value="item-1" className="px-4">
             <AccordionTrigger>Contact</AccordionTrigger>
