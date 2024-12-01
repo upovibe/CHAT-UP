@@ -1,20 +1,21 @@
-import PropTypes from "prop-types";import {
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import {
   Ban,
   Edit,
   MessagesSquare,
   MessageSquareDotIcon,
-  SidebarClose,
-  SidebarOpen,
   Users,
   Rss,
   Mail,
   ArrowLeftFromLineIcon,
   ArrowRightFromLineIcon,
+  Settings,
 } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { useState, useEffect } from "react";
 
-const Sidebar = ({isHidden}) => {
+const Sidebar = ({ isHidden }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -100,18 +101,18 @@ const Sidebar = ({isHidden}) => {
         {!isCollapsed && windowWidth >= 1024 && (
           <div className="mx-auto ml-3 flex items-center justify-between w-full">
             <h2 className="font-bold text-lg">Panel</h2>
-            <Edit className="text-gray-500 size-5"/>
+            <Edit className="text-gray-500 size-5" />
           </div>
         )}
         {windowWidth < 1024 && isCollapsed && (
           <div className="py-[0.37rem] w-fit mx-auto">
-            <Edit className="text-gray-500 size-5"/>
+            <Edit className="text-gray-500 size-5" />
           </div>
         )}
       </div>
 
       {/* Navigation Options */}
-      <ul className="space-y-3 mt-4">
+      <ul className="space-y-3 pt-4 flex flex-col  h-[calc(100vh-11rem)]">
         {navItems.map((item, index) => (
           <li
             key={index}
@@ -148,7 +149,15 @@ const Sidebar = ({isHidden}) => {
           </li>
         ))}
       </ul>
-
+      <Link
+        to="/settings"
+        className={`p-2 flex items-center gap-3 cursor-pointer hover:text-blue-500 border-l-4 border-transparent hover:border-blue-600 hover:bg-blue-100/50 transition-all ${
+          isCollapsed ? "mr-0 justify-center" : "mr-2 lg:rounded-r-full"
+        }`}
+      >
+        <Settings className="text-gray-400" />
+        {!isCollapsed && <span>Settings</span>}
+      </Link>
     </div>
   );
 };

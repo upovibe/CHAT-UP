@@ -32,7 +32,7 @@ function ProfileInfo() {
       <div className="flex-grow overflow-y-auto">
         {/* Profile Details */}
         <div className="grid place-items-center text-center gap-4 border-b-2 py-5">
-          <Avatar className="size-20">
+          <Avatar className="size-20 border-4 border-blue-500">
             <AvatarImage
               src={avatar || "https://via.placeholder.com/150"}
               alt={fullName || "Avatar"}

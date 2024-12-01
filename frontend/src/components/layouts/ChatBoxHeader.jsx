@@ -53,7 +53,6 @@ const ChatBoxHeader = ({ onClose, onProfileClick }) => {
   ];
 
 
-
   return (
     <div className="px-4 py-[0.45rem] border-b-2 flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -66,8 +65,8 @@ const ChatBoxHeader = ({ onClose, onProfileClick }) => {
             {truncateText("Recipient Name", 15)}
           </h2>
           <div className="flex items-center gap-1">
-            <span className="text-gray-500">Active</span>
             <span className="size-2 rounded-full bg-[green]"></span>
+            <span className="text-gray-500">Active</span>
           </div>
         </div>
       </div>
