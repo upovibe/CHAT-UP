@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { validateAvatar } from "@/utils/validators";
 import { Button } from "@/components/ui/button";
 
-const Profile = () => {
+const EditProfile = () => {
   const { authUser, updateProfile, isUpdatingProfile } = useAuth();
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const { toast } = useToast();
@@ -189,4 +189,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default EditProfile;

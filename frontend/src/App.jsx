@@ -5,7 +5,7 @@ import MainLayout from "./components/layouts/MainLayout";
 import Friends from "./pages/Friends";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
-import Settings from "./pages/Settings";
+import Settings from "./pages/settings/Settings";
 import { useAuth } from "./store/useAuth";
 import Loading from "./components/ui/Loading";
 import { Toaster } from "@/components/ui/toaster";
@@ -48,13 +48,8 @@ const App = () => {
           element={authUser ? <MainLayout><Friends /></MainLayout> : <Navigate to="/login" />} 
         />
         
-        <Route 
-          path="/settings" 
-          element={authUser ? <MainLayout><Settings /></MainLayout> : <Navigate to="/login" />} 
-        />
-        
       </Routes>
-    <Toaster />
+    <Toaster/>
     </div>
     </>
   );

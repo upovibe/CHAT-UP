@@ -8,17 +8,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  LogOut,
-  // User,
-  MessageCircle,
-  Clipboard,
-  Settings,
-  BellIcon,
-} from "lucide-react";
+import { LogOut, MessageCircle, Clipboard, BellIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import SearchDialog from "../ui/SearchDialog";
+import SearchDialog from "./SearchDialog";
 import { useAuth } from "@/store/useAuth";
+import SettingsDialog from "@/components/layouts/SettingsDialog";
+import UpdateProfileDialog from "@/components/layouts/UpdateProfileDialog";
 
 const AuthBox = () => {
   const { logout, authUser } = useAuth();
@@ -57,12 +52,6 @@ const AuthBox = () => {
             {authUser?.fullName || "My Account"}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {/* <Link to="#">
-            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-              <User className="size-4" />
-              Profile
-            </DropdownMenuItem>
-          </Link> */}
           <div className="block lg:hidden">
             <Link to="/conversation">
               <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
@@ -77,12 +66,8 @@ const AuthBox = () => {
               </DropdownMenuItem>
             </Link>
           </div>
-          <Link to="/settings">
-            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-              <Settings className="size-4" />
-              Settings
-            </DropdownMenuItem>
-          </Link>
+          <UpdateProfileDialog />
+          <SettingsDialog />
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={logout}
