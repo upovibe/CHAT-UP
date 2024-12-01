@@ -23,7 +23,7 @@ function ProfileInfo() {
   return (
     <div className="h-[calc(100vh-4.1rem)] flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b-2 flex items-center justify-between">
+      <div className="px-3 h-14 border-b-2 flex items-center justify-between">
         <h2 className="md:text-lg font-bold whitespace-nowrap">Profile Info</h2>
         <User className="size-5 text-gray-500 hidden lg:block" />
       </div>

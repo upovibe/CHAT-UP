@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Icon } from "lucide-react";
 
 const DropdownMenuWrapper = ({ triggerElement, menuItems, className }) => {
   return (
@@ -19,7 +20,9 @@ const DropdownMenuWrapper = ({ triggerElement, menuItems, className }) => {
               e.stopPropagation();
               item.onClick?.(e);
             }}
+            disabled={item.disabled}
           >
+            {item.icon && <span className="mr-2 text-gray-500">{item.icon}</span>}
             {item.label}
           </DropdownMenuItem>
         ))}

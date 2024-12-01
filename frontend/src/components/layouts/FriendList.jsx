@@ -1,9 +1,19 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { truncateText } from "@/utils/truncateText";
 import Filter from "./Filter";
-import { Contact, PanelRightClose, PanelLeftClose } from "lucide-react";
+import {
+  Contact,
+  PanelRightClose,
+  PanelLeftClose,
+  Info,
+  MailCheck,
+  Trash,
+  AlertTriangle,
+  ShieldOff,
+} from "lucide-react";
 import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
 
 const FriendList = ({
@@ -12,6 +22,48 @@ const FriendList = ({
   isSidebarHidden,
   onProfileClick,
 }) => {
+  const [selectedContactId, setSelectedContactId] = useState(null);
+
+  const triggerElement = (contact) => (
+    <Avatar>
+      <AvatarImage src={contact.avatar} alt={contact.name} />
+      <AvatarFallback>{contact.name[0]}</AvatarFallback>
+    </Avatar>
+  );
+
+  const menuItems = (contact) => [
+    {
+      label: "Contact Info",
+      icon: <Info size={16} />,
+      onClick: () => onProfileClick(contact),
+    },
+    {
+      label: "Mark as read",
+      icon: <MailCheck size={16} />,
+      className: "lg:hidden",
+    },
+    {
+      label: "Mute Notification",
+      icon: <MailCheck size={16} />,
+      onClick: () => console.log("Mute Notification clicked"),
+    },
+    {
+      label: "Delete Chat",
+      icon: <Trash size={16} />,
+      onClick: () => console.log("Delete Chat clicked"),
+    },
+    {
+      label: "Report",
+      icon: <AlertTriangle size={16} />,
+      onClick: () => console.log("Report clicked"),
+    },
+    {
+      label: "Block",
+      icon: <ShieldOff size={16} />,
+      onClick: () => console.log("Block clicked"),
+    },
+  ];
+
   const contacts = [
     {
       id: 1,
@@ -32,13 +84,14 @@ const FriendList = ({
   ];
 
   const handleContactSelect = (contact) => {
+    setSelectedContactId(contact.id);
     if (onContactSelect) onContactSelect(contact);
   };
 
   return (
     <div className="relative bg-white border-r-2 transition-all duration-300 w-full md:w-4/12 lg:w-6/12 flex flex-col h-full">
       {/* Header */}
-      <div className="lg:p-[1.04rem] p-[1.15rem] border-b-2 flex items-center justify-between gap-5">
+      <div className="px-3 h-14 border-b-2 flex items-center justify-between gap-5">
         <button
           onClick={onToggleSidebar}
           className="p-1 border-gray-300 border-2 text-gray-400 rounded-full"
@@ -63,27 +116,16 @@ const FriendList = ({
             <li
               key={contact.id}
               onClick={() => handleContactSelect(contact)}
-              className="p-4 flex items-center gap-2 cursor-pointer border-r-4 border-transparent hover:border-r-blue-600 transition-all ease-linear duration-200 border-b border-b-gray-200 hover:bg-blue-50/30"
+              className={`p-4 flex items-center gap-2 cursor-pointer border-r-4 transition-all ease-linear duration-200 border-b border-b-gray-200 hover:bg-blue-50/30 ${
+                selectedContactId === contact.id
+                  ? "border-r-blue-600 bg-blue-50/30"
+                  : "border-transparent"
+              }`}
             >
               <DropdownMenuWrapper
                 className="left-0"
-                triggerElement={
-                  <Avatar>
-                    <AvatarImage src={contact.avatar} alt={contact.name} />
-                    <AvatarFallback>{contact.name[0]}</AvatarFallback>
-                  </Avatar>
-                }
-                menuItems={[
-                  {
-                    label: "Contact Info",
-                    onClick: () => onProfileClick(contact),
-                  },
-                  { label: "Mark as read", className: "lg:hidden" },
-                  { label: "Mute Notification" },
-                  { label: "Delete Chat" },
-                  { label: "Report" },
-                  { label: "Block" },
-                ]}
+                triggerElement={triggerElement(contact)}
+                menuItems={menuItems(contact)}
               />
               <div className="flex flex-col items-start gap-1">
                 <h3 className="font-bold whitespace-nowrap leading-none">

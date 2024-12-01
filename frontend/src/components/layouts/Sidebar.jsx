@@ -8,6 +8,8 @@ import PropTypes from "prop-types";import {
   Users,
   Rss,
   Mail,
+  ArrowLeftFromLineIcon,
+  ArrowRightFromLineIcon,
 } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { useState, useEffect } from "react";
@@ -79,7 +81,7 @@ const Sidebar = ({isHidden}) => {
     >
       {/* Header */}
       <div
-        className={`border-b-2 p-4 flex items-center justify-between ${
+        className={`border-b-2 h-14 flex items-center justify-between ${
           isCollapsed ? "px-2" : "px-4"
         }`}
       >
@@ -89,9 +91,9 @@ const Sidebar = ({isHidden}) => {
             className="p-1 border-gray-300 border-2 text-gray-400 rounded-full"
           >
             {isCollapsed ? (
-              <SidebarOpen className="size-5" />
+              <ArrowRightFromLineIcon className="size-5" />
             ) : (
-              <SidebarClose className="size-5" />
+              <ArrowLeftFromLineIcon className="size-5" />
             )}
           </button>
         )}
@@ -152,7 +154,7 @@ const Sidebar = ({isHidden}) => {
 };
 
 Sidebar.propTypes = {
-  isHidden: PropTypes.func,
+  isHidden: PropTypes.bool,
   toggleSidebar: PropTypes.func,
 };
 

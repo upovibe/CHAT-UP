@@ -39,7 +39,7 @@ const AuthorProfileInfo = ({ isVisible, onClose }) => {
 };
 
 AuthorProfileInfo.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
+  isVisible: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
 };
 
