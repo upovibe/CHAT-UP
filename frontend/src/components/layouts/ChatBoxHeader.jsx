@@ -1,14 +1,9 @@
 import { Check, EllipsisVertical, X } from "lucide-react";
 import PropTypes from "prop-types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { truncateText } from "@/utils/truncateText";
+import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
 
 const ChatBoxHeader = ({ onClose, onProfileClick }) => {
   return (
@@ -32,28 +27,27 @@ const ChatBoxHeader = ({ onClose, onProfileClick }) => {
         <Button className="rounded-full h-9 hidden lg:flex" variant="outline">
           <Check /> Mark As Read
         </Button>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger>
+        <DropdownMenuWrapper
+        className="right-0"
+          triggerElement={
             <Button className="rounded-full size-8" variant="outline">
               <EllipsisVertical />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="absolute right-0 w-fit whitespace-nowrap">
-            <DropdownMenuItem className="cursor-pointer" onClick={onProfileClick}>Contact Info</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer lg:hidden">Mark as read</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">Mute Notification</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">Delete Chat</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">Report</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer lg:hidden" onClick={onClose}>Close Chat</DropdownMenuItem> 
-            <DropdownMenuItem className="cursor-pointer">Block</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Close Button for Small Screens */}
+          }
+          menuItems={[
+            { label: "Contact Info", onClick: onProfileClick },
+            { label: "Mark as read", className: "lg:hidden", },
+            { label: "Mute Notification" },
+            { label: "Delete Chat" },
+            { label: "Report" },
+            { label: "Close Chat", className: "lg:hidden", onClick: onClose },
+            { label: "Block" },
+          ]}
+        />
         <Button
           onClick={onClose}
-          className="rounded-full size-8 md:hidden" variant="outline"
+          className="rounded-full size-8 md:hidden"
+          variant="outline"
         >
           <X />
         </Button>

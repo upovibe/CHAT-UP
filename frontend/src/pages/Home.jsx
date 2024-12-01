@@ -40,9 +40,11 @@ const Home = () => {
       <div className="flex-grow flex transition-all duration-300">
         {/* Friend List */}
         <FriendList
-          onProfileClick={handleContactListChat}
+          onContactSelect={handleContactListChat}
           onToggleSidebar={toggleSidebar}
           isSidebarHidden={isSidebarHidden}
+          onProfileClick={handleProfileInfoClick}
+
         />
 
         {/* Chatbox */}

@@ -33,8 +33,7 @@ const AuthBox = () => {
         <div className="flex relative">
           <BellIcon className="size-5" />
           <Badge
-            className="absolute top-0 right-0 px-[3px] size-2"
-            variant="destructive"
+            className="absolute top-0 right-[2px] px-[3px] size-2 bg-blue-500 hover:bg-blue-500 transition-all ease-linear duration-200"
           >
           </Badge>
         </div>
