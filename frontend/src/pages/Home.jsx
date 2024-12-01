@@ -23,6 +23,10 @@ const Home = () => {
     setIsProfileVisible(true);
   };
 
+  const handleProfileToggle = () => {
+    setIsProfileVisible((prev) => !prev);
+  };
+
   const handleProfileClose = () => {
     setIsProfileVisible(false);
   };
@@ -37,8 +41,7 @@ const Home = () => {
       <Sidebar
         isHidden={isSidebarHidden}
         toggleSidebar={toggleSidebar}
-        isVisible={isProfileVisible}
-        onClose={handleProfileClose}
+        onProfileClick={handleProfileToggle}
       />
 
       {/* Main Content */}

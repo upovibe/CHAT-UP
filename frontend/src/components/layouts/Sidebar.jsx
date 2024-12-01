@@ -14,8 +14,11 @@ import {
 } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { useState, useEffect } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/store/useAuth";
 
-const Sidebar = ({ isHidden }) => {
+const Sidebar = ({ isHidden, onClose, onProfileClick }) => {
+  const { authUser } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -112,7 +115,7 @@ const Sidebar = ({ isHidden }) => {
       </div>
 
       {/* Navigation Options */}
-      <ul className="space-y-3 pt-4 flex flex-col  h-[calc(100vh-11rem)]">
+      <ul className="space-y-3 pt-4 flex flex-col  h-[calc(100vh-13rem)]">
         {navItems.map((item, index) => (
           <li
             key={index}
@@ -149,15 +152,36 @@ const Sidebar = ({ isHidden }) => {
           </li>
         ))}
       </ul>
-      <Link
-        to="/settings"
-        className={`p-2 flex items-center gap-3 cursor-pointer hover:text-blue-500 border-l-4 border-transparent hover:border-blue-600 hover:bg-blue-100/50 transition-all ${
-          isCollapsed ? "mr-0 justify-center" : "mr-2 lg:rounded-r-full"
-        }`}
-      >
-        <Settings className="text-gray-400" />
-        {!isCollapsed && <span>Settings</span>}
-      </Link>
+      <div>
+        <div
+          className={`p-2 flex items-center gap-3 cursor-pointer hover:text-blue-500 border-l-4 border-transparent hover:border-blue-600 hover:bg-blue-100/50 transition-all ${
+            isCollapsed ? "mx-auto justify-center" : "mr-2 lg:rounded-r-full"
+          }`}
+        >
+          <Avatar className="cursor-pointer size-7" onClick={onProfileClick}>
+            <AvatarImage
+              src={authUser?.Avatar || "https://via.placeholder.com/150"}
+            />
+            <AvatarFallback>
+              {authUser?.fullName
+                ? `${authUser.fullName.charAt(0)}${authUser.fullName
+                    .split(" ")[1]
+                    ?.charAt(0)}`
+                : "?"}
+            </AvatarFallback>
+          </Avatar>
+          {!isCollapsed && <span className="font-bold ">{authUser?.fullName}</span>}
+        </div>
+        <Link
+          to="/settings"
+          className={`p-2 flex items-center gap-3 cursor-pointer hover:text-blue-500 border-l-4 border-transparent hover:border-blue-600 hover:bg-blue-100/50 transition-all ${
+            isCollapsed ? "mx-auto justify-center" : "mr-2 lg:rounded-r-full"
+          }`}
+        >
+          <Settings className="text-gray-400 " />
+          {!isCollapsed && <span className="font-bold ">Settings</span>}
+        </Link>
+      </div>
     </div>
   );
 };
@@ -165,6 +189,8 @@ const Sidebar = ({ isHidden }) => {
 Sidebar.propTypes = {
   isHidden: PropTypes.bool,
   toggleSidebar: PropTypes.func,
+  onClose: PropTypes.func,
+  onProfileClick: PropTypes.func,
 };
 
 export default Sidebar;

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   LogOut,
-  User,
+  // User,
   MessageCircle,
   Clipboard,
   Settings,
