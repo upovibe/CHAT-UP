@@ -28,7 +28,7 @@ const AuthorProfileInfo = ({ isVisible, onClose }) => {
 
       {/* On Large screens, display as part of the layout */}
       <div
-        className={`fixed top-0 right-0 lg:static lg:translate-x-0 transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 lg:static lg:translate-x-0 transition-all duration-300 ease-in-out ${
           isVisible ? "block" : "hidden"
         } lg:w-6/12 xl:w-8/12 border-l-2`}
       >

@@ -1,6 +1,6 @@
 import Navabr from "./Navabr";
 
-function Header() {
+const Header = () => {
   return (
     <header className="w-full border-b-2">
       <Navabr />

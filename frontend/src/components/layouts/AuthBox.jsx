@@ -56,12 +56,12 @@ const AuthBox = () => {
             {authUser?.fullName || "My Account"}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <Link to="#">
+          {/* <Link to="#">
             <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
               <User className="size-4" />
               Profile
             </DropdownMenuItem>
-          </Link>
+          </Link> */}
           <div className="block lg:hidden">
             <Link to="/conversation">
               <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">

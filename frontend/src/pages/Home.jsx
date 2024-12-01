@@ -34,7 +34,12 @@ const Home = () => {
   return (
     <div className="flex h-full">
       {/* Sidebar */}
-      <Sidebar isHidden={isSidebarHidden} toggleSidebar={toggleSidebar} />
+      <Sidebar
+        isHidden={isSidebarHidden}
+        toggleSidebar={toggleSidebar}
+        isVisible={isProfileVisible}
+        onClose={handleProfileClose}
+      />
 
       {/* Main Content */}
       <div className="flex-grow flex transition-all duration-300">
@@ -44,7 +49,6 @@ const Home = () => {
           onToggleSidebar={toggleSidebar}
           isSidebarHidden={isSidebarHidden}
           onProfileClick={handleProfileInfoClick}
-
         />
 
         {/* Chatbox */}
