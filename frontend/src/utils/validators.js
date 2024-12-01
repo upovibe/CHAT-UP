@@ -27,4 +27,27 @@ export const validateFullName = (fullName) => {
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
     return phoneRegex.test(phoneNumber);
   };
-  
+
+  // Validate avatar: Must be a valid base64 string representing an image
+export const validateAvatar = (avatar) => {
+  if (!avatar || typeof avatar !== "string") {
+    return { isValid: false, error: "Avatar must be a valid base64 string." };
+  }
+
+  // Regular expression to validate base64 image strings
+  const base64Regex = /^data:image\/(png|jpeg|jpg|gif);base64,[A-Za-z0-9+/=]+$/;
+
+  if (!base64Regex.test(avatar)) {
+    return { isValid: false, error: "Invalid image format. Only JPEG, PNG, or GIF images are allowed." };
+  }
+
+  // Decode the base64 string and check size (optional, assuming 4/3 ratio of base64 to bytes)
+  const sizeInBytes = (avatar.length * 3) / 4 - (avatar.endsWith("==") ? 2 : avatar.endsWith("=") ? 1 : 0);
+  const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+  if (sizeInBytes > maxSizeInBytes) {
+    return { isValid: false, error: "Image size must be less than 5MB." };
+  }
+
+  return { isValid: true };
+};

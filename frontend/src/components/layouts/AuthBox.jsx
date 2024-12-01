@@ -32,10 +32,7 @@ const AuthBox = () => {
       >
         <div className="flex relative">
           <BellIcon className="size-5" />
-          <Badge
-            className="absolute top-0 right-[2px] px-[3px] size-2 bg-blue-500 hover:bg-blue-500 transition-all ease-linear duration-200"
-          >
-          </Badge>
+          <Badge className="absolute top-0 right-[2px] px-[3px] size-2 bg-blue-500 hover:bg-blue-500 transition-all ease-linear duration-200"></Badge>
         </div>
       </Link>
       <div className="w-[1px] h-6 bg-black/10"></div>
@@ -43,10 +40,14 @@ const AuthBox = () => {
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar>
-            <AvatarImage src={authUser?.Avatar || "https://via.placeholder.com/150"} />
+            <AvatarImage
+              src={authUser?.avatar || "https://via.placeholder.com/150"}
+            />
             <AvatarFallback>
               {authUser?.fullName
-                ? `${authUser.fullName.charAt(0)}${authUser.fullName.split(' ')[1]?.charAt(0)}`
+                ? `${authUser.fullName.charAt(0)}${authUser.fullName
+                    .split(" ")[1]
+                    ?.charAt(0)}`
                 : "?"}
             </AvatarFallback>
           </Avatar>

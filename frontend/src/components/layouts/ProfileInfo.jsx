@@ -1,4 +1,4 @@
-import { Calendar, Facebook, Mail, Phone, User, X } from "lucide-react";
+import { Calendar, Facebook, Mail, Phone, User, UserCheck, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Accordion,
@@ -40,12 +40,15 @@ const ProfileInfo = ({ onClose }) => {
         {/* Profile Details */}
         <div className="grid place-items-center text-center gap-4 border-b-2 py-5">
           <Avatar className="size-20 border-4 border-blue-500">
-            <AvatarImage
-              src={avatar || "https://via.placeholder.com/150"}
-              alt={fullName || "Avatar"}
+          <AvatarImage
+              src={authUser?.avatar || "https://via.placeholder.com/150"}
             />
             <AvatarFallback>
-              {(fullName || "U").charAt(0).toUpperCase()}
+              {authUser?.fullName
+                ? `${authUser.fullName.charAt(0)}${authUser.fullName
+                    .split(" ")[1]
+                    ?.charAt(0)}`
+                : "?"}
             </AvatarFallback>
           </Avatar>
           <div className="grid">
@@ -66,7 +69,7 @@ const ProfileInfo = ({ onClose }) => {
             <AccordionContent className="flex flex-col gap-2">
               {/* Email */}
               <div className="flex items-start gap-4">
-                <div className="text-gray-500 flex items-start gap-1 font-semibold w-24">
+                <div className="text-gray-500 flex items-center gap-2 font-semibold w-24">
                   <Mail className="size-4" />
                   <span>Email</span>
                 </div>
@@ -79,7 +82,7 @@ const ProfileInfo = ({ onClose }) => {
               </div>
               {/* Username */}
               <div className="flex items-start gap-4">
-                <div className="text-gray-500 flex items-start gap-1 font-semibold w-24">
+                <div className="text-gray-500 flex items-center gap-2 font-semibold w-24">
                   <User className="size-4" />
                   <span>Username</span>
                 </div>
@@ -89,7 +92,7 @@ const ProfileInfo = ({ onClose }) => {
               </div>
               {/* Phone */}
               <div className="flex items-start gap-4">
-                <div className="text-gray-500 flex items-start gap-1 font-semibold w-24">
+                <div className="text-gray-500 flex items-center gap-2 font-semibold w-24">
                   <Phone className="size-4" />
                   <span>Phone</span>
                 </div>
@@ -103,7 +106,7 @@ const ProfileInfo = ({ onClose }) => {
 
               {/* Created At */}
               <div className="flex items-start gap-4">
-                <div className="text-gray-500 flex items-start gap-1 font-semibold w-24">
+                <div className="text-gray-500 flex items-center gap-2 font-semibold w-24">
                   <Calendar className="size-4" />
                   <span>Created</span>
                 </div>
@@ -116,13 +119,30 @@ const ProfileInfo = ({ onClose }) => {
             </AccordionContent>
           </AccordionItem>
 
+                    {/*Account Status*/}
+                    <AccordionItem value="item-3" className="px-4">
+            <AccordionTrigger>Status</AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-2">
+              {/* Facebook */}
+              <div className="flex items-start gap-4">
+                <div className="text-gray-500 flex text-left items-center gap-2 font-semibold w-24">
+                <UserCheck className="size-4" />
+                  <span>Account</span>
+                </div>
+                <p className="font-bold text-green-500 whitespace-nowrap flex items-center gap-1">
+                  <span className="size-2 bg-green-500 rounded-full"></span>Active
+                </p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
           {/* Socials Section */}
           <AccordionItem value="item-2" className="px-4">
             <AccordionTrigger>Socials</AccordionTrigger>
             <AccordionContent className="flex flex-col gap-2">
               {/* Facebook */}
               <div className="flex items-start gap-4">
-                <div className="text-gray-500 flex items-start gap-1 font-semibold w-24">
+                <div className="text-gray-500 flex items-start gap-2 font-semibold w-24">
                   <Facebook className="size-4" />
                   <span>Facebook</span>
                 </div>

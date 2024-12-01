@@ -1,58 +1,81 @@
 import { useAuth } from "@/store/useAuth";
 import DefaultAvatar from "@/assets/images/users/avatar.jpeg";
-import { Camera } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { InputTextarea } from "@/components/ui/InputTextarea";
 import { useState } from "react";
-import supabase from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
+import { validateAvatar } from "@/utils/validators";
+import { Button } from "@/components/ui/button";
 
 const Profile = () => {
   const { authUser, updateProfile, isUpdatingProfile } = useAuth();
-
-  const [formData, setFormData] = useState({
-    fullName: authUser.fullName || "",
-    userName: authUser.userName || "",
-    bio: authUser.bio || "",
-    phoneNumber: authUser.phoneNumber || "",
-    avatar: authUser.avatar || "",
-  });
-  const [avatarFile, setAvatarFile] = useState(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const { toast } = useToast();
 
-  // Avatar upload handler
-  const handleAvatarUpload = async (event) => {
-    const file = event.target.files[0];
+  const { fullName, userName, bio, phoneNumber, avatar } = authUser || {};
+  const [formData, setFormData] = useState({
+    fullName: fullName || "",
+    userName: userName || "",
+    bio: bio || "",
+    phoneNumber: phoneNumber || "",
+    avatar: avatar || "",
+  });
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
     if (!file) return;
 
+    const reader = new FileReader();
     setIsUploadingAvatar(true);
-    try {
-      const fileName = `avatars/${authUser.id}-${Date.now()}`;
-      const { data, error } = await supabase.storage
-        .from("avatars")
-        .upload(fileName, file);
 
-      if (error) {
-        console.error("Avatar upload failed:", error.message);
-        return;
-      }
-
-      const { publicURL } = supabase.storage.from("avatars").getPublicUrl(fileName);
-      setFormData((prev) => ({ ...prev, avatar: publicURL }));
-    } catch (err) {
-      console.error("Avatar upload error:", err);
-    } finally {
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      const base64Image = reader.result;
+      setFormData((prev) => ({ ...prev, avatar: base64Image }));
       setIsUploadingAvatar(false);
-    }
+    };
+
+    reader.onerror = () => {
+      toast({
+        title: "Error",
+        description: "Failed to upload avatar.",
+        variant: "destructive",
+      });
+      setIsUploadingAvatar(false);
+    };
   };
 
-  // Handle profile form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isUpdatingProfile) return;
 
-    // Update profile with form data (including avatar if updated)
-    await updateProfile(formData);
+    // Validate avatar
+    const avatarValidation = validateAvatar(formData.avatar);
+    if (!avatarValidation.isValid) {
+      toast({
+        title: "Invalid Avatar",
+        description: avatarValidation.error,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await updateProfile(formData);
+      toast({
+        title: "Success",
+        description: "Profile updated successfully!",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update profile.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -88,7 +111,9 @@ const Profile = () => {
           </label>
         </div>
         <p className="text-sm text-gray-300">
-          {isUploadingAvatar ? "Uploading..." : "Click the camera icon to update your photo"}
+          {isUploadingAvatar
+            ? "Uploading..."
+            : "Click the camera icon to update your photo"}
         </p>
       </div>
 
@@ -124,9 +149,7 @@ const Profile = () => {
             id="bio"
             placeholder="Enter your bio"
             value={formData.bio}
-            onChange={(e) =>
-              setFormData({ ...formData, bio: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
           />
         </div>
         <div className="grid gap-1.5">
@@ -145,13 +168,22 @@ const Profile = () => {
 
       {/* Submit Button */}
       <div className="flex justify-end">
-        <button
-          type="submit"
-          className={`btn-primary ${isUpdatingProfile ? "animate-pulse" : ""}`}
-          disabled={isUpdatingProfile}
-        >
-          {isUpdatingProfile ? "Updating..." : "Update Profile"}
-        </button>
+        <div className="flex flex-col w-full">
+          <Button
+            type="submit"
+            className="rounded-full bg-slate-950 flex items-center justify-center gap-2"
+            disabled={isUpdatingProfile}
+          >
+            {isUpdatingProfile ? (
+              <>
+                <Loader2 className="animate-spin w-5 h-5" />
+                Please wait
+              </>
+            ) : (
+              "Update Profile"
+            )}
+          </Button>
+        </div>
       </div>
     </form>
   );
