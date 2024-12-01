@@ -14,7 +14,7 @@ const ChatBoxHeader = ({ onClose, onProfileClick }) => {
   return (
     <div className="py-[0.64rem] px-4 md:p-3 lg:px-4 lg:py-[0.63rem] border-b-2 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <Avatar className="">
+        <Avatar className="cursor-pointer" onClick={onProfileClick}>
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
@@ -63,8 +63,8 @@ const ChatBoxHeader = ({ onClose, onProfileClick }) => {
 };
 
 ChatBoxHeader.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  onProfileClick: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
+  onProfileClick: PropTypes.func,
 };
 
 export default ChatBoxHeader;

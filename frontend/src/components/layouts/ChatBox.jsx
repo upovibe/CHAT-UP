@@ -8,7 +8,7 @@ const ChatBox = ({ selectedContact, isVisible, onClose, onProfileClick }) => {
     <>
       {/* Overlay for Small Screens */}
       <div
-        className={`fixed inset-0 z-40 bg-white flex flex-col transform transition-transform md:hidden ${
+        className={`fixed inset-0 z-10 bg-white flex flex-col transform transition-transform md:hidden ${
           isVisible ? "translate-x-0" : "translate-x-full"
         }`}
       >

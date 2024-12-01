@@ -1,4 +1,4 @@
-import {
+import PropTypes from "prop-types";import {
   Ban,
   Edit,
   MessagesSquare,
@@ -12,13 +12,11 @@ import {
 import { Badge } from "../ui/badge";
 import { useState, useEffect } from "react";
 
-const Sidebar = () => {
+const Sidebar = ({isHidden}) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const toggleCollapse = () => setIsCollapsed((prev) => !prev);
-  const toggleSidebar = () => setIsHidden((prev) => !prev);
 
   useEffect(() => {
     const handleResize = () => {
@@ -91,9 +89,9 @@ const Sidebar = () => {
             className="p-1 border-gray-300 border-2 text-gray-400 rounded-full"
           >
             {isCollapsed ? (
-              <SidebarOpen className="size-4" />
+              <SidebarOpen className="size-5" />
             ) : (
-              <SidebarClose className="size-4" />
+              <SidebarClose className="size-5" />
             )}
           </button>
         )}
@@ -104,7 +102,7 @@ const Sidebar = () => {
           </div>
         )}
         {windowWidth < 1024 && isCollapsed && (
-          <div className="py-1 w-fit mx-auto">
+          <div className="py-[0.37rem] w-fit mx-auto">
             <Edit className="text-gray-500 size-5"/>
           </div>
         )}
@@ -149,21 +147,13 @@ const Sidebar = () => {
         ))}
       </ul>
 
-      {/* Toggle Sidebar Button */}
-      {windowWidth < 1024 && (
-        <button
-          onClick={toggleSidebar}
-          className="absolute bottom-4 left-4 z-30 p-1 border-gray-300 border-2 text-gray-400 rounded-full"
-        >
-          {isHidden ? (
-            <SidebarOpen className="size-4" />
-          ) : (
-            <SidebarClose className="size-4" />
-          )}
-        </button>
-      )}
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  isHidden: PropTypes.func,
+  toggleSidebar: PropTypes.func,
 };
 
 export default Sidebar;

@@ -3,13 +3,34 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { truncateText } from "@/utils/truncateText";
 import Filter from "./Filter";
-import { Contact } from "lucide-react";
+import { Contact, PanelRightClose, PanelLeftClose } from "lucide-react";
 
-const FriendList = ({ onProfileClick }) => {
+const FriendList = ({ onProfileClick, onToggleSidebar, isSidebarHidden }) => {
   const contacts = [
-    { id: 1, name: "John Doe", avatar: "https://github.com/shadcn.png", lastMessage: "Hey!", time: "12:45", notifications: 5 },
-    { id: 2, name: "Jane Smith", avatar: null, lastMessage: "What's up?", time: "11:30", notifications: 3 },
-    { id: 2, name: "Jane Smith", avatar: null, lastMessage: "What's up?", time: "11:30", notifications: 3 },
+    {
+      id: 1,
+      name: "John Doe",
+      avatar: "https://github.com/shadcn.png",
+      lastMessage: "Hey!",
+      time: "12:45",
+      notifications: 5,
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      avatar: null,
+      lastMessage: "What's up?",
+      time: "11:30",
+      notifications: 3,
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      avatar: null,
+      lastMessage: "What's up?",
+      time: "11:30",
+      notifications: 3,
+    },
     // Add more contacts as needed
   ];
 
@@ -20,7 +41,18 @@ const FriendList = ({ onProfileClick }) => {
   return (
     <div className="relative bg-white border-r-2 transition-all duration-300 w-full md:w-4/12 lg:w-6/12 flex flex-col h-full">
       {/* Header */}
-      <div className="p-[1.12rem] border-b-2 flex items-center justify-between gap-5">
+      <div className="lg:p-[1.04rem] p-[1.15rem] border-b-2 flex items-center justify-between gap-5">
+        <button
+          onClick={onToggleSidebar}
+          className="p-1 border-gray-300 border-2 text-gray-400 rounded-full"
+        >
+          {isSidebarHidden ? (
+            <PanelRightClose className="w-5 h-5" />
+          ) : (
+            <PanelLeftClose className="w-5 h-5" />
+          )}
+        </button>
+
         <h2 className="font-bold whitespace-nowrap">Contact List</h2>
         <Contact className="size-5 text-gray-500" />
       </div>
@@ -52,7 +84,9 @@ const FriendList = ({ onProfileClick }) => {
                 )}
               </div>
               <div className="flex flex-col items-start gap-1">
-                <h3 className="font-bold whitespace-nowrap leading-none">{contact.name}</h3>
+                <h3 className="font-bold whitespace-nowrap leading-none">
+                  {contact.name}
+                </h3>
                 <p className="truncate whitespace-nowrap leading-none text-gray-500">
                   {truncateText(contact.lastMessage, 20)}
                 </p>
@@ -73,6 +107,8 @@ const FriendList = ({ onProfileClick }) => {
 
 FriendList.propTypes = {
   onProfileClick: PropTypes.func,
+  onToggleSidebar: PropTypes.func,
+  isSidebarHidden: PropTypes.bool,
 };
 
 export default FriendList;
