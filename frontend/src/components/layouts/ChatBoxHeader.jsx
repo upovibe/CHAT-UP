@@ -1,4 +1,5 @@
-import { Check, EllipsisVertical } from "lucide-react";
+import { Check, EllipsisVertical, X } from "lucide-react";
+import PropTypes from "prop-types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -9,11 +10,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { truncateText } from "@/utils/truncateText";
 
-const ChatBoxHeader = () => {
+const ChatBoxHeader = ({ onClose, onProfileClick }) => {
   return (
     <div className="py-[0.64rem] px-4 md:p-3 lg:px-4 lg:py-[0.63rem] border-b-2 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <Avatar className="hidden lg:block">
+        <Avatar className="">
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
@@ -21,7 +22,10 @@ const ChatBoxHeader = () => {
           <h2 className="font-bold whitespace-nowrap leading-none">
             {truncateText("Recipient Name", 15)}
           </h2>
-          <span className="text-sm text-gray-500">Active</span>
+          <div className="flex items-center gap-1">
+            <span className="text-gray-500">Active</span>
+            <span className="size-2 rounded-full bg-[green]"></span>
+          </div>
         </div>
       </div>
       <div className="flex items-center gap-2 justify-between">
@@ -36,17 +40,31 @@ const ChatBoxHeader = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="absolute right-0 w-fit whitespace-nowrap">
-            <DropdownMenuItem>Contact Info</DropdownMenuItem>
-            <DropdownMenuItem>Close Chat</DropdownMenuItem>
-            <DropdownMenuItem>Mute Notification</DropdownMenuItem>
-            <DropdownMenuItem>Delete Chat</DropdownMenuItem>
-            <DropdownMenuItem>Report</DropdownMenuItem>
-            <DropdownMenuItem>Block</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={onProfileClick}>Contact Info</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer lg:hidden">Mark as read</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">Mute Notification</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">Delete Chat</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">Report</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer lg:hidden" onClick={onClose}>Close Chat</DropdownMenuItem> 
+            <DropdownMenuItem className="cursor-pointer">Block</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Close Button for Small Screens */}
+        <Button
+          onClick={onClose}
+          className="rounded-full size-8 md:hidden" variant="outline"
+        >
+          <X />
+        </Button>
       </div>
     </div>
   );
+};
+
+ChatBoxHeader.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onProfileClick: PropTypes.func.isRequired,
 };
 
 export default ChatBoxHeader;

@@ -14,7 +14,7 @@ import {
         <div className="">
           <Select>
             <SelectTrigger className="w-fit focus-visible:ring-0 focus-visible:ring-offset-0">
-              <SelectValue placeholder="Display" />
+              <SelectValue placeholder="Paginate" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="5-open">5 Open</SelectItem>
@@ -28,7 +28,9 @@ import {
         <Select>
           <div>
             <SelectTrigger className="w-fit focus-visible:ring-0 focus-visible:ring-offset-0">
-              <SelectValue placeholder={<FilterIcon className="size-5 text-gray-500" />} />
+              <SelectValue placeholder={<div className="whitespace-nowrap flex items-center gap-1">
+                <span>Filter by</span><FilterIcon className="size-3 text-gray-500" />
+                </div>} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="newest">Newest</SelectItem>

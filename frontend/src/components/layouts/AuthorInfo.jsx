@@ -1,15 +1,19 @@
 import PropTypes from "prop-types";
 import { SidebarClose } from "lucide-react";
-import ProfileInfo from "./ProfileInfo";
+import ProfileInfo from "@/components/layouts/ProfileInfo";
 
 const AuthorProfileInfo = ({ isVisible, onClose }) => {
   return (
     <>
       {/* Overlay - On Small/Medium screens */}
       <div
-        className={`fixed top-0 right-0 w-full md:w-6/12 h-full border-l-2 z-40 transform transition-transform duration-300 ease-out 
-          ${isVisible ? "translate-x-0 animate-slideIn bg-white" : "translate-x-full animate-slideOut bg-white"}
-          sm:block md:block lg:hidden`}
+        className={`fixed top-0 right-0 w-full md:w-6/12 h-full border-l-2 z-[9999] transform transition-transform duration-300 ease-out 
+    ${
+      isVisible
+        ? "translate-x-0 animate-slideIn bg-white"
+        : "translate-x-full animate-slideOut bg-white"
+    }
+    sm:block md:block lg:hidden`}
       >
         {/* Close Button for Overlay */}
         <button
