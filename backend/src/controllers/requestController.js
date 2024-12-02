@@ -90,16 +90,27 @@ export const declineFriendRequest = async (req, res) => {
   }
 
   try {
-    // Update request to declined
-    const request = await FriendRequest.findByIdAndUpdate(
-      id,
-      { status: "declined" },
-      { new: true }
-    );
+    const request = await FriendRequest.findById(id);
 
     if (!request) {
       return res.status(404).json({ message: "Friend request not found!" });
     }
+
+    // Check if either user has blocked the other
+    const blockExists = await BlockedUser.findOne({
+      $or: [
+        { blocker: request.sender, blocked: request.recipient },
+        { blocker: request.recipient, blocked: request.sender },
+      ],
+    });
+
+    if (blockExists) {
+      return res.status(403).json({ message: "Cannot decline friend request. One of the users has blocked the other." });
+    }
+
+    // Update request to declined
+    request.status = "declined";
+    await request.save();
 
     res.status(200).json({ message: "Friend request declined!", request });
   } catch (error) {
