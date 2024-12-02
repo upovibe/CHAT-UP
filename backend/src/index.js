@@ -10,8 +10,9 @@ import { connectDB } from './config/db.js';
 
 // Import routes
 import authRoutes from './routes/authRoute.js';
-import messageRoutes from './routes/messageRoute.js';
+import searchRoutes from "./routes/searchRoutes.js";
 import requestRoutes from './routes/requestRoute.js';
+import messageRoutes from './routes/messageRoute.js';
 
 // initialize dotenv
 dotenv.config();
@@ -29,6 +30,7 @@ app.use(cors({
 
 // Initialize Routes
 app.use("/api/auth", authRoutes);
+app.use("/api", searchRoutes); 
 app.use('/api/friend', requestRoutes);
 app.use('/api/message', messageRoutes);
 

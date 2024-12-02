@@ -240,7 +240,6 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-
 // Check Authentication Logic
 export const checkAuth = (req, res) => {
   try {
