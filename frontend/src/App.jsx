@@ -5,10 +5,10 @@ import MainLayout from "./components/layouts/MainLayout";
 import Friends from "./pages/Friends";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
-import Settings from "./pages/settings/Settings";
 import { useAuth } from "./store/useAuth";
 import Loading from "./components/ui/Loading";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuth();
@@ -22,8 +22,8 @@ const App = () => {
   };
 
   return (
-    <>
-    <div>
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+
       <Routes>
         {/* Signup route: Only accessible if the user is not logged in */}
         <Route 
@@ -50,8 +50,7 @@ const App = () => {
         
       </Routes>
     <Toaster/>
-    </div>
-    </>
+    </ThemeProvider>
   );
 };
 

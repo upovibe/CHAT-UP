@@ -1,8 +1,10 @@
-
+import ThemeSettings from "@/components/layouts/ThemeSettings"
 
 const Settings = () => {
   return (
-    <div>Settings</div>
+    <div>
+      <ThemeSettings/>
+    </div>
   )
 }
 

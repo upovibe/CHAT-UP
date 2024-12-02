@@ -4,10 +4,8 @@ import Header from "./Header";
 const MainLayout = ({ children }) => {
   return (
     <div className="h-screen flex flex-col">
-        <Header />
-      <main className="flex-grow overflow-auto">
-        {children}
-      </main>
+      <Header />
+      <main className="flex-grow overflow-auto">{children}</main>
     </div>
   );
 };
