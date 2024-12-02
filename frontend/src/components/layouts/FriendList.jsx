@@ -89,7 +89,7 @@ const FriendList = ({
   };
 
   return (
-    <div className="relative bg-white border-r-2 transition-all duration-300 w-full md:w-4/12 lg:w-6/12 flex flex-col h-full">
+    <div className="relative  border-r-2 transition-all duration-300 w-full md:w-4/12 lg:w-6/12 flex flex-col h-full">
       {/* Header */}
       <div className="px-3 h-14 border-b-2 flex items-center justify-between gap-5">
         <button
@@ -116,9 +116,9 @@ const FriendList = ({
             <li
               key={contact.id}
               onClick={() => handleContactSelect(contact)}
-              className={`p-4 flex items-center gap-2 cursor-pointer border-r-4 transition-all ease-linear duration-200 border-b border-b-gray-200 hover:bg-blue-50/30 ${
+              className={`p-4 flex items-center gap-2 cursor-pointer border-r-4 transition-all ease-linear duration-200 border-b border-b-gray-200 dark:border-b-gray-800 hover:bg-blue-300/30 ${
                 selectedContactId === contact.id
-                  ? "border-r-blue-600 bg-blue-50/30"
+                  ? "border-r-blue-600 bg-blue-600/50"
                   : "border-transparent"
               }`}
             >
@@ -131,14 +131,14 @@ const FriendList = ({
                 <h3 className="font-bold whitespace-nowrap leading-none">
                   {contact.name}
                 </h3>
-                <p className="truncate whitespace-nowrap leading-none text-gray-500">
+                <p className="truncate whitespace-nowrap leading-none text-gray-600 dark:text-white/50">
                   {truncateText(contact.lastMessage, 20)}
                 </p>
               </div>
               <div className="flex ml-auto flex-col items-end justify-end">
-                <span className="text-sm text-gray-400">{contact.time}</span>
+                <span className="text-sm text-gray-500 dark:text-white/40">{contact.time}</span>
                 {contact.notifications > 0 && (
-                  <Badge className="bg-blue-500 hover:bg-blue-500">
+                  <Badge className="bg-blue-500 hover:bg-blue-500 text-white">
                     {contact.notifications}
                   </Badge>
                 )}
