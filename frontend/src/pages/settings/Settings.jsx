@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import ThemeSettings from "@/components/layouts/ThemeSettings";
+import ThemeSettings from "@/pages/settings/ThemeSettings";
 import AccountSettings from "@/pages/settings/AccountSettings";
 import { Palette, UserCog } from "lucide-react";
 
