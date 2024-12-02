@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import FriendRequest from "../models/requestModel.js";
+import BlockedUser from "../models/blockedUserModel.js";
 
 // Send a Friend Request
 export const sendFriendRequest = async (req, res) => {
@@ -12,6 +13,18 @@ export const sendFriendRequest = async (req, res) => {
   }
 
   try {
+    // Check if either user has blocked the other
+    const blockExists = await BlockedUser.findOne({
+      $or: [
+        { blocker: senderId, blocked: recipientId },
+        { blocker: recipientId, blocked: senderId },
+      ],
+    });
+
+    if (blockExists) {
+      return res.status(403).json({ message: "Cannot send friend request. One of the users has blocked the other." });
+    }
+
     // Check if a request already exists
     const existingRequest = await FriendRequest.findOne({
       sender: senderId,
@@ -40,16 +53,27 @@ export const acceptFriendRequest = async (req, res) => {
   }
 
   try {
-    // Update request to accepted
-    const request = await FriendRequest.findByIdAndUpdate(
-      id,
-      { status: "accepted" },
-      { new: true }
-    );
+    const request = await FriendRequest.findById(id);
 
     if (!request) {
       return res.status(404).json({ message: "Friend request not found!" });
     }
+
+    // Check if either user has blocked the other
+    const blockExists = await BlockedUser.findOne({
+      $or: [
+        { blocker: request.sender, blocked: request.recipient },
+        { blocker: request.recipient, blocked: request.sender },
+      ],
+    });
+
+    if (blockExists) {
+      return res.status(403).json({ message: "Cannot accept friend request. One of the users has blocked the other." });
+    }
+
+    // Update request to accepted
+    request.status = "accepted";
+    await request.save();
 
     res.status(200).json({ message: "Friend request accepted!", request });
   } catch (error) {

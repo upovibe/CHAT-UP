@@ -13,6 +13,7 @@ import authRoutes from './routes/authRoute.js';
 import searchRoutes from "./routes/searchRoutes.js";
 import requestRoutes from './routes/requestRoute.js';
 import messageRoutes from './routes/messageRoute.js';
+import blockRoutes from "./routes/blockRoutes.js";
 
 // initialize dotenv
 dotenv.config();
@@ -32,6 +33,7 @@ app.use(cors({
 app.use("/api/auth", authRoutes);
 app.use("/api", searchRoutes); 
 app.use("/api", requestRoutes);
+app.use("/api", blockRoutes);
 app.use("/api/message", messageRoutes);
 
 // Define the port number the server will listen on
