@@ -25,7 +25,9 @@ export const blockUser = async (req, res) => {
 
     res.status(201).json({ message: "User blocked successfully", block });
   } catch (error) {
-    res.status(500).json({ message: "Error blocking user", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error blocking user", error: error.message });
   }
 };
 
@@ -50,6 +52,33 @@ export const unblockUser = async (req, res) => {
 
     res.status(200).json({ message: "User unblocked successfully" });
   } catch (error) {
-    res.status  .status(500).json({ message: "Error unblocking user", error: error.message });
+    res.status
+      .status(500)
+      .json({ message: "Error unblocking user", error: error.message });
+  }
+};
+
+// Get list of blocked users
+export const getBlockedUsers = async (req, res) => {
+  const blockerId = req.user.id; // Get the authenticated user's ID
+
+  try {
+    const blockedUsers = await BlockedUser.find({ blocker: blockerId })
+      .populate("blocked", "userName fullName avatar")
+      .select("blocked");
+
+    if (!blockedUsers.length) {
+      return res.status(404).json({ message: "No blocked users found" });
+    }
+
+    // Extract user data
+    const blockedUserList = blockedUsers.map((block) => block.blocked);
+
+    res.status(200).json({ blockedUsers: blockedUserList });
+  } catch (error) {
+    console.error("Error fetching blocked users:", error.message);
+    res
+      .status(500)
+      .json({ message: "Internal server error.", error: error.message });
   }
 };
