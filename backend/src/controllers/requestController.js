@@ -3,7 +3,8 @@ import FriendRequest from "../models/requestModel.js";
 
 // Send a Friend Request
 export const sendFriendRequest = async (req, res) => {
-  const { senderId, recipientId } = req.body;
+  const { recipientId } = req.body; // Use recipientId sent from the frontend
+  const senderId = req.user.id; // Get senderId from the authenticated user
 
   // Validate IDs
   if (!mongoose.Types.ObjectId.isValid(senderId) || !mongoose.Types.ObjectId.isValid(recipientId)) {
@@ -151,7 +152,6 @@ export const getFriendsList = async (req, res) => {
 
     // Map results to show friend details
     const friendsList = friends.map((friend) => {
-      // Determine the friend (other person) in the relationship
       const isSender = friend.sender._id.toString() === userId;
       const friendData = isSender ? friend.recipient : friend.sender;
 
@@ -165,6 +165,6 @@ export const getFriendsList = async (req, res) => {
 
     res.status(200).json({ friends: friendsList });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching friends list", error });
+    res.status(500).json({ message: "Error fetching friends list", error: error.message });
   }
 };

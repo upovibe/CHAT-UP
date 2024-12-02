@@ -31,8 +31,8 @@ app.use(cors({
 // Initialize Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", searchRoutes); 
-app.use('/api/friend', requestRoutes);
-app.use('/api/message', messageRoutes);
+app.use("/api", requestRoutes);
+app.use("/api/message", messageRoutes);
 
 // Define the port number the server will listen on
 const PORT = process.env.PORT || 5001;
