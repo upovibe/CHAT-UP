@@ -9,8 +9,12 @@ import {
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect } from "react";
 
 const SearchDialog = () => {
+  const [loading, setLoading] = useState(true);
+
   const users = [
     {
       fullName: "Shad CN",
@@ -29,6 +33,12 @@ const SearchDialog = () => {
     },
   ];
 
+  // Simulate a loading delay
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div>
       <Dialog>
@@ -45,26 +55,46 @@ const SearchDialog = () => {
                 placeholder="Search new friends..."
               />
             </DialogTitle>
-            <DialogDescription className="mr-auto">Lists </DialogDescription>
+            <DialogDescription className="mr-auto">Lists</DialogDescription>
           </DialogHeader>
           <ul className="space-y-1">
-            {users.map((user, index) => (
-              <li key={index} className="flex items-center space-x-4 hover:bg-gray-200 dark:hover:bg-gray-800 p-2 rounded-lg cursor-pointer transition-all ease-linear duration-200">
-                <Avatar>
-                  <AvatarImage src={user.imageUrl} />
-                  <AvatarFallback>
-                    {user.fullName.charAt(0)}
-                    {user.fullName.split(" ")[1]?.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {user.fullName}
-                  </div>
-                  <div className="text-sm text-gray-500">@{user.username}</div>
-                </div>
-              </li>
-            ))}
+            {loading
+              ? Array(3) // Show 3 skeleton loaders
+                  .fill(null)
+                  .map((_, index) => (
+                    <li
+                      key={index}
+                      className="flex items-center space-x-4 p-2 rounded-lg"
+                    >
+                      <Skeleton className="h-12 w-12 rounded-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-[250px]" />
+                        <Skeleton className="h-4 w-[200px]" />
+                      </div>
+                    </li>
+                  ))
+              : users.map((user, index) => (
+                  <li
+                    key={index}
+                    className="flex items-center space-x-4 hover:bg-gray-200 dark:hover:bg-gray-800 p-2 rounded-lg cursor-pointer transition-all ease-linear duration-200"
+                  >
+                    <Avatar>
+                      <AvatarImage src={user.imageUrl} />
+                      <AvatarFallback>
+                        {user.fullName.charAt(0)}
+                        {user.fullName.split(" ")[1]?.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {user.fullName}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        @{user.username}
+                      </div>
+                    </div>
+                  </li>
+                ))}
           </ul>
         </DialogContent>
       </Dialog>

@@ -62,7 +62,7 @@ const Login = () => {
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row w-full bg-white p-2 lg:p-5 gap-5">
+    <div className="min-h-screen flex flex-col lg:flex-row w-full p-2 lg:p-5 gap-5">
       {/* left side */}
       <div className="w-full lg:w-4/12 lg:h-screen h-full flex flex-col justify-between">
         <Logo />

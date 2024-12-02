@@ -14,7 +14,7 @@ const Logo = () => {
       />
 
       {/* Text "CHAT-UP" for larger screens */}
-      <span className="hidden sm:block font-extrabold text-gray-800">CHAT-UP</span>
+      <span className="hidden sm:block font-extrabold text-gray-800 dark:text-gray-200">CHAT-UP</span>
     </div>
     </Link>
     </>

@@ -4,12 +4,12 @@ import arrowAnimation from "@/assets/animations/AnimationArrow.json";
 
 const Greetings = () => {
   return (
-    <div className="w-full lg:w-8/12 bg-[#dbdfe5] lg:h-screen h-full flex flex-col items-center justify-between py-5 lg:pl-5 lg:rounded-2xl overflow-hidden">
+    <div className="w-full lg:w-8/12 bg-[#dbdfe5] dark:bg-[#1a1924] lg:h-screen h-full flex flex-col items-center justify-between py-5 lg:pl-5 lg:rounded-2xl overflow-hidden">
     {/* First Layer: Heading (Small Height) */}
     <div className="h-max p-5 rounded-xl mb-4 w-full lg:flex flex-col items-center my-3 mr-5 hidden">
       <div className="flex items-center justify-end gap-3 w-full">
         <h1 className="text-white text-lg rounded-full rounded-tr-none bg-blue-600 shadow px-6 py-2 ml-auto">
-          Let's Chat!
+          Let&apos;s Chat!
         </h1>
         <img
           src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wyMDkyMnwwfDF8c2VhcmNofDg0fHx1c2VyfGVufDB8fHx8MTczMjU1NjgyMHww&ixlib=rb-4.0.3&q=80&w=1080"
