@@ -32,7 +32,7 @@ const SearchDialog = () => {
   return (
     <div>
       <Dialog>
-        <DialogTrigger className="flex items-center justify-between bg-gray-100 py-[3px] pl-1 pr-6 text-xs md:text-sm text-gray-500 rounded-md border-2 border-gray-400/50 gap-2">
+        <DialogTrigger className="flex items-center justify-between bg-gray-100 dark:bg-gray-900 py-[3px] pl-1 pr-6 text-xs md:text-sm text-gray-500 rounded-md border-2 border-gray-400/50 gap-2">
           <Search className="mr-2 size-4" />
           Search new friends...
         </DialogTrigger>
@@ -49,7 +49,7 @@ const SearchDialog = () => {
           </DialogHeader>
           <ul className="space-y-1">
             {users.map((user, index) => (
-              <li key={index} className="flex items-center space-x-4 hover:bg-gray-200 p-2 rounded-lg cursor-pointer transition-all ease-linear duration-200">
+              <li key={index} className="flex items-center space-x-4 hover:bg-gray-200 dark:hover:bg-gray-800 p-2 rounded-lg cursor-pointer transition-all ease-linear duration-200">
                 <Avatar>
                   <AvatarImage src={user.imageUrl} />
                   <AvatarFallback>
@@ -58,7 +58,7 @@ const SearchDialog = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {user.fullName}
                   </div>
                   <div className="text-sm text-gray-500">@{user.username}</div>
