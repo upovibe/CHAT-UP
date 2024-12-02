@@ -7,7 +7,6 @@ import {
 import ThemeSettings from "@/components/layouts/ThemeSettings";
 import AccountSettings from "@/pages/settings/AccountSettings";
 import { Palette, UserCog } from "lucide-react";
-import { Separator } from "@/components/ui/separator"
 
 const Settings = () => {
   return (

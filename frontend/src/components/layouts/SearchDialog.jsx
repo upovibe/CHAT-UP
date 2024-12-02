@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +11,6 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState, useEffect } from "react";
 
 const SearchDialog = () => {
   const [loading, setLoading] = useState(true);
@@ -27,6 +27,32 @@ const SearchDialog = () => {
       imageUrl: "https://via.placeholder.com/150",
     },
     {
+      fullName: "John Smith",
+      username: "johnsmith",
+      imageUrl: "https://via.placeholder.com/150",
+    },
+    {
+      fullName: "John Smith",
+      username: "johnsmith",
+      imageUrl: "https://via.placeholder.com/150",
+    },
+    {
+      fullName: "John Smith",
+      username: "johnsmith",
+      imageUrl: "https://via.placeholder.com/150",
+    },    {
+      fullName: "John Smith",
+      username: "johnsmith",
+      imageUrl: "https://via.placeholder.com/150",
+    },    {
+      fullName: "John Smith",
+      username: "johnsmith",
+      imageUrl: "https://via.placeholder.com/150",
+    },    {
+      fullName: "John Smith",
+      username: "johnsmith",
+      imageUrl: "https://via.placeholder.com/150",
+    },    {
       fullName: "John Smith",
       username: "johnsmith",
       imageUrl: "https://via.placeholder.com/150",
@@ -57,7 +83,7 @@ const SearchDialog = () => {
             </DialogTitle>
             <DialogDescription className="mr-auto">Lists</DialogDescription>
           </DialogHeader>
-          <ul className="space-y-1">
+          <ul className="space-y-1 max-h-[300px] overflow-auto">
             {loading
               ? Array(3) // Show 3 skeleton loaders
                   .fill(null)
