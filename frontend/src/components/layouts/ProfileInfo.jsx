@@ -41,7 +41,7 @@ const ProfileInfo = ({ onClose }) => {
         <div className="grid place-items-center text-center gap-4 border-b-2 py-5">
           <Avatar className="size-20 border-4 border-blue-500">
           <AvatarImage
-              src={authUser?.avatar || "https://via.placeholder.com/150"}
+              src={authUser?.avatar}
             />
             <AvatarFallback>
               {authUser?.fullName

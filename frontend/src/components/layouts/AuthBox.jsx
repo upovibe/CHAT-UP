@@ -35,7 +35,7 @@ const AuthBox = () => {
         <DropdownMenuTrigger>
           <Avatar>
             <AvatarImage
-              src={authUser?.avatar || "https://via.placeholder.com/150"}
+              src={authUser?.avatar}
             />
             <AvatarFallback>
               {authUser?.fullName

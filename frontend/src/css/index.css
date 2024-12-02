@@ -4,6 +4,69 @@
 
 /* ... */
 
+/* Style scrollbars for Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 5px; /* Width of the vertical scrollbar */
+  height: 5px; /* Height of the horizontal scrollbar */
+  opacity: 0; /* Set initial opacity to 0 to hide it */
+  transition: opacity 0.3s ease; /* Smooth transition when showing/hiding */
+}
+
+/* Show scrollbar when hovered */
+::-webkit-scrollbar:hover {
+  opacity: 1; /* Set opacity to 1 on hover */
+}
+
+/* Style the track (the area the thumb slides in) */
+::-webkit-scrollbar-track {
+  background: #f1f1f11a; /* Background of the track */
+  border-radius: 10px; /* Rounded corners for the track */
+}
+
+/* Style the thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background: rgba(136, 136, 136, 0.5); /* Light gray with lower opacity */
+  border-radius: 10px; /* Rounded corners for the thumb */
+  transition: background 0.3s ease; /* Smooth transition when hovering */
+}
+
+/* Change thumb color when hovered */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(85, 85, 85, 0.8); /* Darker thumb with more opacity on hover */
+}
+
+/* Style scrollbars for Firefox */
+scrollbar {
+  width: 12px;
+  height: 12px;
+  opacity: 0; /* Set initial opacity to 0 to hide it */
+  transition: opacity 0.3s ease;
+}
+
+/* Show scrollbar on hover for Firefox */
+scrollbar:hover {
+  opacity: 1; /* Set opacity to 1 on hover */
+}
+
+/* Style the track for Firefox */
+scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+/* Style the thumb for Firefox */
+scrollbar-thumb {
+  background: rgba(136, 136, 136, 0.5); /* Light gray with lower opacity */
+  border-radius: 10px;
+}
+
+/* Change thumb color when hovered for Firefox */
+scrollbar-thumb:hover {
+  background: rgba(85, 85, 85, 0.8); /* Darker thumb with more opacity on hover */
+}
+
+
+
 html,
 body {
   height: 100%;

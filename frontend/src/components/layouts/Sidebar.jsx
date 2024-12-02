@@ -168,7 +168,7 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
         >
           <Avatar className="cursor-pointer size-7">
             <AvatarImage
-              src={authUser?.avatar || "https://via.placeholder.com/150"}
+              src={authUser?.avatar}
             />
             <AvatarFallback>
               {authUser?.fullName
