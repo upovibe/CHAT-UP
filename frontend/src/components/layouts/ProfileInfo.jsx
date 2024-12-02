@@ -52,7 +52,7 @@ const ProfileInfo = ({ onClose }) => {
             </AvatarFallback>
           </Avatar>
           <div className="grid">
-            <h3 className="whitespace-nowrap font-bold text-gray-900">
+            <h3 className="whitespace-nowrap font-bold text-gray-900 dark:text-gray-100">
               {fullName || "N/A"}
             </h3>
             <p className="px-2 text-sm text-gray-500">
@@ -75,7 +75,7 @@ const ProfileInfo = ({ onClose }) => {
                 </div>
                 <a
                   href={`mailto:${email}`}
-                  className="font-bold text-gray-800 whitespace-nowrap hover:underline"
+                  className="font-bold text-gray-800 dark:text-gray-400 whitespace-nowrap hover:underline"
                 >
                   {email || "Not provided"}
                 </a>
@@ -86,7 +86,7 @@ const ProfileInfo = ({ onClose }) => {
                   <User className="size-4" />
                   <span>Username</span>
                 </div>
-                <p className="font-bold text-gray-800 whitespace-nowrap">
+                <p className="font-bold text-gray-800 dark:text-gray-400 whitespace-nowrap">
                   {userName || "Not provided"}
                 </p>
               </div>
@@ -98,7 +98,7 @@ const ProfileInfo = ({ onClose }) => {
                 </div>
                 <a
                   href={`tel:${phoneNumber}`}
-                  className="font-bold text-gray-800 whitespace-nowrap hover:underline"
+                  className="font-bold text-gray-800 dark:text-gray-400 whitespace-nowrap hover:underline"
                 >
                   {phoneNumber || "Not provided"}
                 </a>
@@ -110,7 +110,7 @@ const ProfileInfo = ({ onClose }) => {
                   <Calendar className="size-4" />
                   <span>Created</span>
                 </div>
-                <p className="font-bold text-gray-800 whitespace-nowrap">
+                <p className="font-bold text-gray-800 dark:text-gray-400 whitespace-nowrap">
                   {createdAt
                     ? format(new Date(createdAt), "MMM dd, yyyy h:mm a")
                     : "N/A"}
@@ -146,7 +146,7 @@ const ProfileInfo = ({ onClose }) => {
                   <Facebook className="size-4" />
                   <span>Facebook</span>
                 </div>
-                <p className="font-bold text-gray-800 whitespace-nowrap">
+                <p className="font-bold text-gray-800 dark:text-gray-400 whitespace-nowrap">
                   Promise Uzor
                 </p>
               </div>
