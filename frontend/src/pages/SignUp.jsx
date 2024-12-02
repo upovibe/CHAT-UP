@@ -231,7 +231,7 @@ const SignUp = () => {
                 <div className="flex flex-col w-full">
                   <Button
                     type="submit"
-                    className="rounded-full bg-slate-950 flex items-center justify-center gap-2"
+                    className="rounded-full bg-slate-950 dark:bg-slate-50  flex items-center justify-center gap-2"
                     disabled={isSigingUp}
                   >
                     {isSigingUp ? (
