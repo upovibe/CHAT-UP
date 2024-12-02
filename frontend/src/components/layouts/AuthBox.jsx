@@ -13,7 +13,6 @@ import { Link } from "react-router-dom";
 import SearchDialog from "./SearchDialog";
 import { useAuth } from "@/store/useAuth";
 import SettingsDialog from "@/components/layouts/SettingsDialog";
-import UpdateProfileDialog from "@/components/layouts/UpdateProfileDialog";
 
 const AuthBox = () => {
   const { logout, authUser } = useAuth();
@@ -66,7 +65,6 @@ const AuthBox = () => {
               </DropdownMenuItem>
             </Link>
           </div>
-          <UpdateProfileDialog />
           <SettingsDialog />
           <DropdownMenuSeparator />
           <DropdownMenuItem
