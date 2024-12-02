@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import {
   Ban,
   Edit,
@@ -27,7 +27,7 @@ import Settings from "@/pages/settings/Settings";
 const Sidebar = ({ isHidden, onProfileClick }) => {
   const { authUser } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);  
 
   const toggleCollapse = () => setIsCollapsed((prev) => !prev);
 
@@ -162,7 +162,7 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
       <div>
         <div
          onClick={onProfileClick}
-          className={`p-2 flex items-center gap-3 cursor-pointer hover:text-blue-500 border-l-4 border-transparent hover:border-blue-600 hover:bg-blue-100/50 transition-all ${
+          className={`p-2 flex items-center gap-3 cursor-pointer hover:text-blue-500 dark:hover:text-blue-950 border-l-4 border-transparent hover:border-blue-600 hover:bg-blue-100/50 transition-all ${
             isCollapsed ? "mx-auto justify-center" : "mr-2 lg:rounded-r-full"
           }`}
         >
