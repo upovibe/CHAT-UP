@@ -16,15 +16,13 @@ import Greetings from "@/components/layouts/Greetings";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    identifier: "", // Can be email, username, or phone number
+    identifier: "",
     password: "",
   });  
 
   const { login, isLoggingIn } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
-
-  
+  const navigate = useNavigate();  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,13 +46,10 @@ const Login = () => {
         title: "Login Successful",
         description: `Welcome back, ${user.fullName || "User"}!`,
       });
-      
-      navigate("/");
     } catch {
       toast({
         variant: "destructive",
-        title: "Invalid Credentials",
-        description: "The credentials you entered are incorrect.",
+        description: "Invalid Credentials",
       });
     }
   };  

@@ -10,6 +10,7 @@ import { useAuth } from "@/store/useAuth";
 import { format } from "date-fns";
 import Loading from "@/components/ui/Loading";
 import PropTypes from "prop-types";
+import { Button } from "../ui/button";
 
 const ProfileInfo = ({ onClose }) => {
   const { authUser } = useAuth();
@@ -27,12 +28,12 @@ const ProfileInfo = ({ onClose }) => {
       <div className="px-3 h-14 border-b-2 flex items-center justify-between">
         <h2 className="md:text-lg font-bold whitespace-nowrap">Profile Info</h2>
         {/* Close button for large screens */}
-        <button
+        <Button
+         className="rounded-full size-9 hidden lg:flex items-center" variant="outline"
           onClick={onClose}
-          className="hidden lg:block p-1 border-gray-300 border-2 text-gray-400 rounded-full"
         >
           <X className="size-5 " />
-        </button>
+        </Button>
       </div>
 
       {/* Scrollable Content */}
