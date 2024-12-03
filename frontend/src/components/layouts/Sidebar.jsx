@@ -23,6 +23,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Settings from "@/pages/settings/Settings";
+import { Button } from "../ui/button";
 
 const Sidebar = ({ isHidden, onProfileClick }) => {
   const { authUser } = useAuth();
@@ -92,21 +93,18 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
     >
       {/* Header */}
       <div
-        className={`border-b-2 h-14 flex items-center justify-between ${
-          isCollapsed ? "px-2" : "px-4"
+        className={`border-b-2 h-14 flex items-center justify-between px-2 ${
+          isCollapsed ? "" : ""
         }`}
       >
         {windowWidth >= 1024 && (
-          <button
-            onClick={toggleCollapse}
-            className="p-1 border-gray-300 border-2 text-gray-400 rounded-full"
-          >
+          <Button className="rounded-full size-9 hidden lg:flex" variant="outline" onClick={toggleCollapse}>            
             {isCollapsed ? (
-              <ArrowRightFromLineIcon className="size-5" />
+              <ArrowRightFromLineIcon/>
             ) : (
-              <ArrowLeftFromLineIcon className="size-5" />
+              <ArrowLeftFromLineIcon/>
             )}
-          </button>
+          </Button>
         )}
         {!isCollapsed && windowWidth >= 1024 && (
           <div className="mx-auto ml-3 flex items-center justify-between w-full">

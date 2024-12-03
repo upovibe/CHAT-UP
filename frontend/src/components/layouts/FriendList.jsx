@@ -15,6 +15,7 @@ import {
   ShieldOff,
 } from "lucide-react";
 import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
+import { Button } from "../ui/button";
 
 const FriendList = ({
   onContactSelect,
@@ -92,16 +93,15 @@ const FriendList = ({
     <div className="relative  border-r-2 transition-all duration-300 w-full md:w-4/12 lg:w-6/12 flex flex-col h-full">
       {/* Header */}
       <div className="px-3 h-14 border-b-2 flex items-center justify-between gap-5">
-        <button
+        <Button className="rounded-full size-9 flex" variant="outline"
           onClick={onToggleSidebar}
-          className="p-1 border-gray-300 border-2 text-gray-400 rounded-full"
         >
           {isSidebarHidden ? (
             <PanelRightClose className="w-5 h-5" />
           ) : (
             <PanelLeftClose className="w-5 h-5" />
           )}
-        </button>
+        </Button>
         <h2 className="font-bold whitespace-nowrap">Friend List</h2>
         <Contact className="size-5 text-gray-500" />
       </div>

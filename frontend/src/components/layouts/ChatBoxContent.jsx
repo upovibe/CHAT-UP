@@ -20,7 +20,7 @@ const ChatContent = () => {
             11:03 AM
             <Clock className="size-3" />
           </span>
-          <div className="bg-blue-600 border rounded-xl rounded-br-none text-sm flex flex-col max-w-[400px] md:max-w-[500px] relative text-white">
+          <div className="bg-blue-600 border rounded-xl rounded-br-none text-sm flex flex-col max-w-[250px] sm:max-w-[300px] md:max-w-[350px] lg:max-w-[500px] relative text-white">
             <p className="p-2">
               Hi, Jane, I&apos;m Looking forward to meeting You Lorem ipsum
               dolor sit amet consectetur adipisicing elit. Cupiditate, libero
@@ -39,7 +39,7 @@ const ChatContent = () => {
             11:23 AM
             <Clock className="size-3" />
           </span>
-          <div className="bg-blue-50 border text-gray-900 rounded-xl rounded-bl-none text-sm items-start max-w-[400px] md:max-w-[500px]">
+          <div className="bg-blue-50 border text-gray-900 rounded-xl rounded-bl-none text-sm items-start max-w-[250px] sm:max-w-[300px] md:max-w-[350px] lg:max-w-[500px]">
             <p className="p-2">
               Hi, Jane, I&apos;m Looking forward to meeting You Lorem ipsum
               dolor sit amet consectetur adipisicing elit. Cupiditate, libero
@@ -55,7 +55,7 @@ const ChatContent = () => {
             11:40 AM
             <Clock className="size-3" />
           </span>
-          <div className="bg-blue-600 text-white border rounded-xl rounded-br-none text-sm flex items-end flex-col max-w-[400px] md:max-w-[500px] relative">
+          <div className="bg-blue-600 text-white border rounded-xl rounded-br-none text-sm flex items-end flex-col max-w-[250px] sm:max-w-[300px] md:max-w-[350px] lg:max-w-[500px] relative">
             <img
               src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wyMDkyMnwwfDF8c2VhcmNofDg0fHx1c2VyfGVufDB8fHx8MTczMjU1NjgyMHww&ixlib=rb-4.0.3&q=80&w=1080"
               alt="sent Image"
@@ -76,7 +76,7 @@ const ChatContent = () => {
             11:23 AM
             <Clock className="size-3" />
           </span>
-          <div className="bg-blue-50 border text-gray-900 rounded-xl rounded-bl-none text-sm items-start max-w-[400px] md:max-w-[500px]">
+          <div className="bg-blue-50 border text-gray-900 rounded-xl rounded-bl-none text-sm items-start max-w-[250px] sm:max-w-[300px] md:max-w-[350px] lg:max-w-[500px]">
             <a
               href="https://example.com"
               className="text-blue-600 font-semibold underline p-2 hover:blur-none blur-sm inline-block break-words"
