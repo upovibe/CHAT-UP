@@ -130,9 +130,7 @@ const SearchDialog = () => {
                 Error: {error}
               </li>
             ) : uniqueResults.length > 0 ? (
-              uniqueResults.map((user) => {
-                console.log('User:', user); // Debugging line
-              
+              uniqueResults.map((user) => {              
                 return (
                   <li
                     key={user.id ?? `fallback-${user.username}`}
