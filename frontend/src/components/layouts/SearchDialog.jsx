@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSearch } from "@/store/useSearch";
-import { useFriendRequests } from "@/store/useFriendRequests";
+import { useSearch } from "@/stores/useSearch";
+import { useFriendRequests } from "@/stores/useFriendRequests";
 import {
   Dialog,
   DialogContent,
@@ -20,10 +20,36 @@ import { UserPlus, UserCheck } from "lucide-react";
 const SearchDialog = () => {
   const [query, setQuery] = useState("");
   const { searchUsers, searchResults, isSearching, error } = useSearch();
-  const { sendRequest, removeFriend } = useFriendRequests();
+  const { sendRequest, fetchSentRequests, sentRequests } = useFriendRequests();
   const { toast } = useToast();
 
-  const [sentRequests, setSentRequests] = useState([]);
+  const [localSentRequests, setLocalSentRequests] = useState([]);
+
+  // Load sent requests on component mount
+  useEffect(() => {
+    const loadSentRequests = async () => {
+      try {
+        await fetchSentRequests();
+        setLocalSentRequests(sentRequests);
+      } catch (error) {
+        console.error("Error loading sent requests:", error);
+        const storedRequests =
+          JSON.parse(localStorage.getItem("sentRequests")) || [];
+        setLocalSentRequests(storedRequests);
+      }
+    };
+    loadSentRequests();
+  }, [fetchSentRequests, sentRequests]);
+
+  // Listen for sent requests changes in Zustand and persist to localStorage
+  useEffect(() => {
+    setLocalSentRequests(sentRequests);
+  }, [sentRequests]);
+
+  // Persist sentRequests to localStorage
+  useEffect(() => {
+    localStorage.setItem("sentRequests", JSON.stringify(localSentRequests));
+  }, [localSentRequests]);
 
   // Debounced search handler
   const debouncedSearch = useCallback(
@@ -36,55 +62,47 @@ const SearchDialog = () => {
   );
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => debouncedSearch(query), 500); // 500ms debounce
+    const timeoutId = setTimeout(() => debouncedSearch(query), 500);
     return () => clearTimeout(timeoutId);
   }, [query, debouncedSearch]);
 
-  // Remove duplicate search results
-  const uniqueResults = searchResults.filter(
-    (user, index, self) =>
-      index ===
-      self.findIndex((u) => u.id === user.id || u.username === user.username)
-  );
+  // Remove duplicate search results and map _id to id if necessary
+  const uniqueResults = searchResults
+    .filter(
+      (user, index, self) =>
+        index ===
+        self.findIndex((u) => u.id === user.id || u.username === user.username)
+    )
+    .map((user) => {
+      if (!user.id && user._id) {
+        user.id = user._id;
+      }
+      return user;
+    });
 
-  // Handle sending or canceling friend requests
-  const toggleRequest = async (userId) => {
-    if (sentRequests.includes(userId)) {
-      // Cancel the request
-      try {
-        await removeFriend(userId); // Assuming `removeFriend` cancels the request
-        setSentRequests((prev) => prev.filter((id) => id !== userId));
-        toast({
-          title: "Request canceled",
-          description: "You have canceled the friend request.",
-          status: "info",
-        });
-      } catch (error) {
-        console.error("Error canceling request:", error.message);
-        toast({
-          title: "Error",
-          description: "Could not cancel the friend request.",
-          status: "error",
-        });
-      }
-    } else {
-      // Send a new request
-      try {
-        await sendRequest(userId);
-        setSentRequests((prev) => [...prev, userId]);
-        toast({
-          title: "Request sent",
-          description: "Your friend request has been sent.",
-          status: "success",
-        });
-      } catch (error) {
-        console.error("Error sending request:", error.message);
-        toast({
-          title: "Error",
-          description: "Could not send the friend request.",
-          status: "error",
-        });
-      }
+  // Handle sending friend requests
+  const sendFriendRequest = async (userId) => {
+    if (!userId || localSentRequests.includes(userId)) {
+      toast({
+        description: "Friend request already sent.",
+        status: "info",
+      });
+      return;
+    }
+
+    try {
+      await sendRequest(userId);
+      setLocalSentRequests((prev) => [...prev, userId]);
+      toast({
+        description: "Your friend request has been sent.",
+        status: "success",
+      });
+    } catch (error) {
+      console.error("Error sending request:", error.message);
+      toast({
+        description: "Could not send the friend request.",
+        status: "error",
+      });
     }
   };
 
@@ -130,7 +148,7 @@ const SearchDialog = () => {
                 Error: {error}
               </li>
             ) : uniqueResults.length > 0 ? (
-              uniqueResults.map((user) => {              
+              uniqueResults.map((user) => {
                 return (
                   <li
                     key={user.id ?? `fallback-${user.username}`}
@@ -154,23 +172,18 @@ const SearchDialog = () => {
                       </div>
                     </div>
                     <Toggle
-                      aria-label={
-                        sentRequests.includes(user.id)
-                          ? "Cancel friend request"
-                          : "Send friend request"
-                      }
-                      onClick={() => toggleRequest(user.id)}
+                      aria-label="Send friend request"
+                      onClick={() => sendFriendRequest(user.id)}
                     >
-                      {sentRequests.includes(user.id) ? (
+                      {localSentRequests.includes(user.id) ? (
                         <UserCheck className="text-green-500" />
                       ) : (
                         <UserPlus className="text-gray-500" />
                       )}
                     </Toggle>
                   </li>
-                )
+                );
               })
-               
             ) : (
               <li key="no-results" className="text-gray-500 text-sm">
                 No users found matching &quot;{query.trim()}&quot;

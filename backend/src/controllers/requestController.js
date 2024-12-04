@@ -4,16 +4,14 @@ import BlockedUser from "../models/blockedUserModel.js";
 
 // Send a Friend Request
 export const sendFriendRequest = async (req, res) => {
-  const { recipientId } = req.body; // Use recipientId sent from the frontend
-  const senderId = req.user.id; // Get senderId from the authenticated user
+  const { recipientId } = req.body;
+  const senderId = req.user.id;
 
-  // Validate IDs
   if (!mongoose.Types.ObjectId.isValid(senderId) || !mongoose.Types.ObjectId.isValid(recipientId)) {
     return res.status(400).json({ message: "Invalid sender or recipient ID" });
   }
 
   try {
-    // Check if either user has blocked the other
     const blockExists = await BlockedUser.findOne({
       $or: [
         { blocker: senderId, blocked: recipientId },
@@ -25,7 +23,6 @@ export const sendFriendRequest = async (req, res) => {
       return res.status(403).json({ message: "Cannot send friend request. One of the users has blocked the other." });
     }
 
-    // Check if a request already exists
     const existingRequest = await FriendRequest.findOne({
       sender: senderId,
       recipient: recipientId,
@@ -35,7 +32,6 @@ export const sendFriendRequest = async (req, res) => {
       return res.status(400).json({ message: "Request already sent!" });
     }
 
-    // Create a new friend request
     const friendRequest = new FriendRequest({ sender: senderId, recipient: recipientId, status: "pending" });
     await friendRequest.save();
     res.status(201).json({ message: "Friend request sent!", friendRequest });
@@ -46,7 +42,7 @@ export const sendFriendRequest = async (req, res) => {
 
 // Accept a Friend Request
 export const acceptFriendRequest = async (req, res) => {
-  const { id } = req.params; // FriendRequest ID
+  const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid friend request ID" });
@@ -59,19 +55,6 @@ export const acceptFriendRequest = async (req, res) => {
       return res.status(404).json({ message: "Friend request not found!" });
     }
 
-    // Check if either user has blocked the other
-    const blockExists = await BlockedUser.findOne({
-      $or: [
-        { blocker: request.sender, blocked: request.recipient },
-        { blocker: request.recipient, blocked: request.sender },
-      ],
-    });
-
-    if (blockExists) {
-      return res.status(403).json({ message: "Cannot accept friend request. One of the users has blocked the other." });
-    }
-
-    // Update request to accepted
     request.status = "accepted";
     await request.save();
 
@@ -96,31 +79,39 @@ export const declineFriendRequest = async (req, res) => {
       return res.status(404).json({ message: "Friend request not found!" });
     }
 
-    // Check if either user has blocked the other
-    const blockExists = await BlockedUser.findOne({
-      $or: [
-        { blocker: request.sender, blocked: request.recipient },
-        { blocker: request.recipient, blocked: request.sender },
-      ],
-    });
-
-    if (blockExists) {
-      return res.status(403).json({ message: "Cannot decline friend request. One of the users has blocked the other." });
-    }
-
-    // Update request to declined
     request.status = "declined";
     await request.save();
 
-    res.status(200).json({ message: "Friend request declined!", request });
+    res.status(200).json({ message: "Friend request declined.", request });
   } catch (error) {
     res.status(500).json({ message: "Error declining friend request", error: error.message });
   }
 };
 
+// Delete a Friend Request
+export const deleteFriendRequest = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid friend request ID" });
+  }
+
+  try {
+    const request = await FriendRequest.findByIdAndDelete(id);
+
+    if (!request) {
+      return res.status(404).json({ message: "Friend request not found." });
+    }
+
+    res.status(200).json({ message: "Friend request deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting friend request", error: error.message });
+  }
+};
+
 // Get Friend Requests
 export const getFriendRequests = async (req, res) => {
-  const { userId } = req.query;
+  const userId = req.user.id;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ message: "Invalid user ID" });
@@ -138,39 +129,37 @@ export const getFriendRequests = async (req, res) => {
   }
 };
 
-// Remove Friend
-export const removeFriend = async (req, res) => {
+// Get Sent Friend Requests
+export const getSentRequests = async (req, res) => {
   const userId = req.user.id;
-  const { friendId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(friendId)) {
-    return res.status(400).json({ message: "Invalid friend ID" });
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: "Invalid user ID" });
   }
 
   try {
-    const friendship = await FriendRequest.findOneAndDelete({
-      $or: [
-        { sender: userId, recipient: friendId, status: "accepted" },
-        { sender: friendId, recipient: userId, status: "accepted" },
-      ],
-    });
+    const sentRequests = await FriendRequest.find({
+      sender: userId,
+      status: "pending", // Optional: filter by "pending" status
+    }).populate("recipient", "userName fullName avatar");
 
-    if (!friendship) {
-      return res.status(404).json({ message: "Friendship not found" });
-    }
+    const formattedRequests = sentRequests.map((request) => ({
+      id: request.recipient._id,
+      userName: request.recipient.userName,
+      fullName: request.recipient.fullName,
+      avatar: request.recipient.avatar,
+    }));
 
-    res.status(200).json({ message: "Friend removed successfully" });
+    res.status(200).json({ sentRequests: formattedRequests });
   } catch (error) {
-    console.error("Error removing friend:", error.message);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Error fetching sent requests", error: error.message });
   }
 };
 
 // Get Friends List
 export const getFriendsList = async (req, res) => {
-  const userId = req.user.id; // Authenticated user ID from `protectRoute`
+  const userId = req.user.id;
 
-  // Validate userId
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ message: "Invalid user ID" });
   }
@@ -182,10 +171,9 @@ export const getFriendsList = async (req, res) => {
         { recipient: userId, status: "accepted" },
       ],
     })
-      .populate("sender", "userName fullName avatar") // Populating sender details
-      .populate("recipient", "userName fullName avatar"); // Populating recipient details
+      .populate("sender", "userName fullName avatar")
+      .populate("recipient", "userName fullName avatar");
 
-    // Map results to show friend details
     const friendsList = friends.map((friend) => {
       const isSender = friend.sender._id.toString() === userId;
       const friendData = isSender ? friend.recipient : friend.sender;

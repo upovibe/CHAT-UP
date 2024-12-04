@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/store/useAuth";
+import { useAuth } from "@/stores/useAuth";
 import Logo from "@/components/ui/Logo";
 import { Button } from "@/components/ui/button";
 import GoogleIcon from "@/assets/svgs/icons/google-icon.svg";

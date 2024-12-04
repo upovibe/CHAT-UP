@@ -5,7 +5,7 @@ import MainLayout from "./components/layouts/MainLayout";
 import Friends from "./pages/Friends";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
-import { useAuth } from "./store/useAuth";
+import { useAuth } from "./stores/useAuth";
 import Loading from "./components/ui/Loading";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme/theme-provider";

@@ -3,8 +3,9 @@ import {
   sendFriendRequest,
   acceptFriendRequest,
   declineFriendRequest,
+  deleteFriendRequest,
   getFriendRequests,
-  removeFriend,
+  getSentRequests,
   getFriendsList,
 } from "../controllers/requestController.js";
 import { protectRoute } from "../middleware/authMiddleware.js";
@@ -20,13 +21,16 @@ router.post("/accept/:id", protectRoute, acceptFriendRequest);
 // Decline a friend request
 router.post("/decline/:id", protectRoute, declineFriendRequest);
 
+// Delete a friend request (sent or received)
+router.delete("/delete/:id", protectRoute, deleteFriendRequest);
+
 // Get pending friend requests
 router.get("/requests", protectRoute, getFriendRequests);
 
+// Retrieve sent friend requests
+router.get("/sent-requests", protectRoute, getSentRequests);
+
 // Get friends list
 router.get("/friends", protectRoute, getFriendsList);
-
-// Remove a friend
-router.delete("/friends/:friendId", protectRoute, removeFriend);
 
 export default router;

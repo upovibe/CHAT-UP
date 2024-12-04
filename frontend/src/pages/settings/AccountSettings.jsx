@@ -1,4 +1,4 @@
-import { useAuth } from "@/store/useAuth";
+import { useAuth } from "@/stores/useAuth";
 import DefaultAvatar from "@/assets/images/users/avatar.jpeg";
 import { Camera, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";

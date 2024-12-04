@@ -11,7 +11,7 @@ import {
 import { LogOut, MessageCircle, Clipboard, BellIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import SearchDialog from "./SearchDialog";
-import { useAuth } from "@/store/useAuth";
+import { useAuth } from "@/stores/useAuth";
 import SettingsDialog from "@/components/layouts/SettingsDialog";
 
 const AuthBox = () => {

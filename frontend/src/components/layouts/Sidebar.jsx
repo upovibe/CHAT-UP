@@ -15,7 +15,7 @@ import {
 import { Badge } from "../ui/badge";
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/store/useAuth";
+import { useAuth } from "@/stores/useAuth";
 import {
   Dialog,
   DialogContent,
