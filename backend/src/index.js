@@ -32,7 +32,7 @@ app.use(cors({
 // Initialize Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", searchRoutes); 
-app.use("/api", requestRoutes);
+app.use("/api/request", requestRoutes);
 app.use("/api", blockRoutes);
 app.use("/api/message", messageRoutes);
 

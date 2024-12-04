@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearch } from "@/stores/useSearch";
-import { useFriendRequests } from "@/stores/useFriendRequests";
 import {
   Dialog,
   DialogContent,
@@ -20,36 +19,7 @@ import { UserPlus, UserCheck } from "lucide-react";
 const SearchDialog = () => {
   const [query, setQuery] = useState("");
   const { searchUsers, searchResults, isSearching, error } = useSearch();
-  const { sendRequest, fetchSentRequests, sentRequests } = useFriendRequests();
   const { toast } = useToast();
-
-  const [localSentRequests, setLocalSentRequests] = useState([]);
-
-  // Load sent requests on component mount
-  useEffect(() => {
-    const loadSentRequests = async () => {
-      try {
-        await fetchSentRequests();
-        setLocalSentRequests(sentRequests);
-      } catch (error) {
-        console.error("Error loading sent requests:", error);
-        const storedRequests =
-          JSON.parse(localStorage.getItem("sentRequests")) || [];
-        setLocalSentRequests(storedRequests);
-      }
-    };
-    loadSentRequests();
-  }, [fetchSentRequests, sentRequests]);
-
-  // Listen for sent requests changes in Zustand and persist to localStorage
-  useEffect(() => {
-    setLocalSentRequests(sentRequests);
-  }, [sentRequests]);
-
-  // Persist sentRequests to localStorage
-  useEffect(() => {
-    localStorage.setItem("sentRequests", JSON.stringify(localSentRequests));
-  }, [localSentRequests]);
 
   // Debounced search handler
   const debouncedSearch = useCallback(
@@ -80,32 +50,6 @@ const SearchDialog = () => {
       return user;
     });
 
-  // Handle sending friend requests
-  const sendFriendRequest = async (userId) => {
-    if (!userId || localSentRequests.includes(userId)) {
-      toast({
-        description: "Friend request already sent.",
-        status: "info",
-      });
-      return;
-    }
-
-    try {
-      await sendRequest(userId);
-      setLocalSentRequests((prev) => [...prev, userId]);
-      toast({
-        description: "Your friend request has been sent.",
-        status: "success",
-      });
-    } catch (error) {
-      console.error("Error sending request:", error.message);
-      toast({
-        description: "Could not send the friend request.",
-        status: "error",
-      });
-    }
-  };
-
   return (
     <div>
       <Dialog>
@@ -134,13 +78,16 @@ const SearchDialog = () => {
                 .map((_, index) => (
                   <li
                     key={`skeleton-placeholder-${index}`}
-                    className="flex items-center space-x-4 p-2 rounded-lg"
+                    className="flex items-center justify-between space-x-4 p-2 rounded-lg"
                   >
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-[250px]" />
-                      <Skeleton className="h-4 w-[200px]" />
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="size-10 rounded-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-3 w-[250px]" />
+                        <Skeleton className="h-3 w-[200px]" />
+                      </div>
                     </div>
+                    <Skeleton className="size-5 p-3" />
                   </li>
                 ))
             ) : error ? (
@@ -154,7 +101,7 @@ const SearchDialog = () => {
                     key={user.id ?? `fallback-${user.username}`}
                     className="flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-800 p-2 rounded-lg cursor-pointer transition-all ease-linear duration-200"
                   >
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center gap-3">
                       <Avatar>
                         <AvatarImage src={user.avatar} />
                         <AvatarFallback>
@@ -171,15 +118,8 @@ const SearchDialog = () => {
                         </div>
                       </div>
                     </div>
-                    <Toggle
-                      aria-label="Send friend request"
-                      onClick={() => sendFriendRequest(user.id)}
-                    >
-                      {localSentRequests.includes(user.id) ? (
-                        <UserCheck className="text-green-500" />
-                      ) : (
-                        <UserPlus className="text-gray-500" />
-                      )}
+                    <Toggle aria-label="Send friend request">
+                      <UserPlus className="text-gray-500" />
                     </Toggle>
                   </li>
                 );

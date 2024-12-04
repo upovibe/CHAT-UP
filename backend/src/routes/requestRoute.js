@@ -1,36 +1,40 @@
 import express from "express";
 import {
   sendFriendRequest,
-  acceptFriendRequest,
-  declineFriendRequest,
-  deleteFriendRequest,
-  getFriendRequests,
-  getSentRequests,
-  getFriendsList,
+  // cancelFriendRequest,
+  // getPendingFriendRequests,
+  // acceptFriendRequest,
+  // rejectFriendRequest,
+  // getFriendsList,
+  // reSendFriendRequest,
+  // getFriendRequestStatus,
 } from "../controllers/requestController.js";
 import { protectRoute } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // Send a friend request
-router.post("/send", protectRoute, sendFriendRequest);
+router.post("/friend-requests/send", protectRoute, sendFriendRequest);
 
-// Accept a friend request
-router.post("/accept/:id", protectRoute, acceptFriendRequest);
+// // Cancel a pending friend request
+// router.post("/friend-requests/cancel", protectRoute, cancelFriendRequest);
 
-// Decline a friend request
-router.post("/decline/:id", protectRoute, declineFriendRequest);
+// // Get a list of all pending friend requests for the logged-in user
+// router.get("/friend-requests/pending", protectRoute, getPendingFriendRequests);
 
-// Delete a friend request (sent or received)
-router.delete("/delete/:id", protectRoute, deleteFriendRequest);
+// // Accept a friend request
+// router.post("/friend-requests/accept", protectRoute, acceptFriendRequest);
 
-// Get pending friend requests
-router.get("/requests", protectRoute, getFriendRequests);
+// // Reject a friend request
+// router.post("/friend-requests/reject", protectRoute, rejectFriendRequest);
 
-// Retrieve sent friend requests
-router.get("/sent-requests", protectRoute, getSentRequests);
+// // Get a list of all accepted friends for the logged-in user
+// router.get("/friends/list", protectRoute, getFriendsList);
 
-// Get friends list
-router.get("/friends", protectRoute, getFriendsList);
+// // Re-send a friend request after cancellation or expiration
+// router.post("/friend-requests/re-send", protectRoute, reSendFriendRequest);
+
+// // Get the status of a friend request (e.g., pending, accepted, canceled, expired)
+// router.get("/friend-requests/status/:userId", protectRoute, getFriendRequestStatus);
 
 export default router;
