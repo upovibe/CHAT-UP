@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearch } from "@/stores/useSearch";
+import { useFriendRequests } from "@/stores/useFriendRequests";
 import {
   Dialog,
   DialogContent,
@@ -14,12 +15,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toggle } from "@/components/ui/toggle";
 import { useToast } from "@/hooks/use-toast";
-import { UserPlus, UserCheck } from "lucide-react";
+import { UserPlus, UserX, Loader2 } from "lucide-react";
 
 const SearchDialog = () => {
   const [query, setQuery] = useState("");
   const { searchUsers, searchResults, isSearching, error } = useSearch();
+  const {
+    sendFriendRequest,
+    cancelFriendRequest,
+    loading,
+    success,
+    error: friendError,
+  } = useFriendRequests();
   const { toast } = useToast();
+  const [sendingTo, setSendingTo] = useState(null);
+  const [sentRequests, setSentRequests] = useState(new Set());
 
   // Debounced search handler
   const debouncedSearch = useCallback(
@@ -36,6 +46,24 @@ const SearchDialog = () => {
     return () => clearTimeout(timeoutId);
   }, [query, debouncedSearch]);
 
+  // Notify on success or error
+  useEffect(() => {
+    if (success) {
+      toast({ title: "Success", description: success, status: "success" });
+      setSendingTo(null);
+      // Remove from sentRequests if success is a cancel request
+      setSentRequests((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(success.receiverId);
+        return newSet;
+      });
+    }
+    if (friendError) {
+      toast({ title: "Error", description: friendError, status: "error" });
+      setSendingTo(null);
+    }
+  }, [success, friendError, toast]);
+
   // Remove duplicate search results and map _id to id if necessary
   const uniqueResults = searchResults
     .filter(
@@ -49,6 +77,17 @@ const SearchDialog = () => {
       }
       return user;
     });
+
+  const handleSendRequest = async (userId) => {
+    setSendingTo(userId);
+    await sendFriendRequest(userId);
+    setSentRequests((prev) => new Set(prev).add(userId));
+  };
+
+  const handleCancelRequest = async (userId) => {
+    setSendingTo(userId);
+    await cancelFriendRequest(userId);
+  };
 
   return (
     <div>
@@ -83,8 +122,8 @@ const SearchDialog = () => {
                     <div className="flex items-center gap-3">
                       <Skeleton className="size-10 rounded-full" />
                       <div className="space-y-2">
-                        <Skeleton className="h-3 w-[250px]" />
-                        <Skeleton className="h-3 w-[200px]" />
+                        <Skeleton className="h-3 w-24" />
+                        <Skeleton className="h-3 w-10" />
                       </div>
                     </div>
                     <Skeleton className="size-5 p-3" />
@@ -96,6 +135,7 @@ const SearchDialog = () => {
               </li>
             ) : uniqueResults.length > 0 ? (
               uniqueResults.map((user) => {
+                const isRequestSent = sentRequests.has(user.id);
                 return (
                   <li
                     key={user.id ?? `fallback-${user.username}`}
@@ -118,8 +158,31 @@ const SearchDialog = () => {
                         </div>
                       </div>
                     </div>
-                    <Toggle aria-label="Send friend request">
-                      <UserPlus className="text-gray-500" />
+                    <Toggle
+                      aria-label={
+                        isRequestSent
+                          ? "Cancel friend request"
+                          : "Send friend request"
+                      }
+                      onClick={() =>
+                        isRequestSent
+                          ? handleCancelRequest(user.id)
+                          : handleSendRequest(user.id)
+                      }
+                      disabled={sendingTo === user.id || loading}
+                      className={`text-white ${
+                        isRequestSent
+                          ? "bg-red-500"
+                          : "bg-green-500"
+                      }`}
+                    >
+                      {sendingTo === user.id ? (
+                        <Loader2 className="animate-spin" />
+                      ) : isRequestSent ? (
+                        <UserX className="" />
+                      ) : (
+                        <UserPlus className="" />
+                      )}
                     </Toggle>
                   </li>
                 );

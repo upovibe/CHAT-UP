@@ -1,9 +1,9 @@
 import express from "express";
 import {
   sendFriendRequest,
-  // cancelFriendRequest,
-  // getPendingFriendRequests,
-  // acceptFriendRequest,
+  cancelFriendRequest,
+  getPendingFriendRequests,
+  acceptFriendRequest,
   // rejectFriendRequest,
   // getFriendsList,
   // reSendFriendRequest,
@@ -14,16 +14,16 @@ import { protectRoute } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 // Send a friend request
-router.post("/friend-requests/send", protectRoute, sendFriendRequest);
+router.post("/send", protectRoute, sendFriendRequest);
 
-// // Cancel a pending friend request
-// router.post("/friend-requests/cancel", protectRoute, cancelFriendRequest);
+// Cancel a pending friend request
+router.post("/cancel", protectRoute, cancelFriendRequest);
 
-// // Get a list of all pending friend requests for the logged-in user
-// router.get("/friend-requests/pending", protectRoute, getPendingFriendRequests);
+// Get a list of all pending friend requests for the logged-in user
+router.get("/pending", protectRoute, getPendingFriendRequests);
 
-// // Accept a friend request
-// router.post("/friend-requests/accept", protectRoute, acceptFriendRequest);
+// Accept a friend request
+router.post("/accept", protectRoute, acceptFriendRequest);
 
 // // Reject a friend request
 // router.post("/friend-requests/reject", protectRoute, rejectFriendRequest);
