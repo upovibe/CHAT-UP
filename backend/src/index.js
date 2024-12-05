@@ -14,6 +14,7 @@ import searchRoutes from "./routes/searchRoutes.js";
 import requestRoutes from './routes/requestRoute.js';
 import messageRoutes from './routes/messageRoute.js';
 import blockRoutes from "./routes/blockRoutes.js";
+import notificationRoutes from './routes/notificationRoutes.js';
 
 // initialize dotenv
 dotenv.config();
@@ -32,6 +33,7 @@ app.use(cors({
 // Initialize Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", searchRoutes); 
+app.use("/api/notifications", notificationRoutes);
 app.use("/api/friend-requests", requestRoutes);
 app.use("/api", blockRoutes);
 app.use("/api/message", messageRoutes);

@@ -15,7 +15,7 @@ import {
   ShieldOff,
 } from "lucide-react";
 import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 const FriendList = ({
   onContactSelect,

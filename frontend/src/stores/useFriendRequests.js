@@ -6,8 +6,12 @@ export const useFriendRequests = create((set) => ({
   loading: false,
   error: null,
   success: null,
+  pendingRequests: [],
+  cancelledRequests: [], // Updated to reflect cancelled spelling
 
   // Actions
+
+  // Send Friend Request
   sendFriendRequest: async (receiverId) => {
     set({ loading: true, error: null, success: null });
 
@@ -29,7 +33,7 @@ export const useFriendRequests = create((set) => ({
   },
 
   // Cancel Friend Request
-   cancelFriendRequest: async (receiverId) => { // Updated to use receiverId
+  cancelFriendRequest: async (receiverId) => {
     set({ loading: true, error: null, success: null });
 
     try {
@@ -48,5 +52,37 @@ export const useFriendRequests = create((set) => ({
       });
     }
   },
+
+  // Get Cancelled Friend Requests
+  getCancelledFriendRequests: async () => {
+    set({ loading: true, error: null });
+    try {
+      const response = await axiosInstance.get("/friend-requests/cancelled");
+      set({
+        cancelledRequests: response.data.cancelledRequests,
+        loading: false,
+      });
+    } catch (error) {
+      set({ error: error.response?.data?.message || "An error occurred", loading: false });
+    }
+  },
+
+  // Get Pending Friend Requests
+  getPendingFriendRequests: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      const response = await axiosInstance.get("/friend-requests/pending");
+
+      set({
+        pendingRequests: response.data.pendingRequests,
+        loading: false,
+      });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "An error occurred",
+        loading: false,
+      });
+    }
+  },
 }));
- 

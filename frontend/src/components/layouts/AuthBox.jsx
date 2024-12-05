@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import SearchDialog from "./SearchDialog";
 import { useAuth } from "@/stores/useAuth";
 import SettingsDialog from "@/components/layouts/SettingsDialog";
+import Notification from "@/components/layouts/Notification";
 
 const AuthBox = () => {
   const { logout, authUser } = useAuth();
@@ -20,23 +21,12 @@ const AuthBox = () => {
   return (
     <div className="flex items-center space-x-4">
       <SearchDialog />
-      <Link
-        to="/notifications"
-        className="flex items-center text-gray-700 hover:text-blue-600 font-bold transition-all ease-linear duration-200"
-      >
-        <div className="flex relative">
-          <BellIcon className="size-5" />
-          <Badge className="absolute top-0 right-[2px] px-[3px] size-2 bg-blue-500 hover:bg-blue-500 transition-all ease-linear duration-200"></Badge>
-        </div>
-      </Link>
+      <Notification />
       <div className="w-[1px] h-6 bg-black/10"></div>
-
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar>
-            <AvatarImage
-              src={authUser?.avatar}
-            />
+            <AvatarImage src={authUser?.avatar} />
             <AvatarFallback>
               {authUser?.fullName
                 ? `${authUser.fullName.charAt(0)}${authUser.fullName

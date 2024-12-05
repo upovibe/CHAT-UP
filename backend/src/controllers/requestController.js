@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import Notification from "../models/notification.js"; 
 import FriendRequest from "../models/requestModel.js";
 import BlockedUser from "../models/blockedUserModel.js";
+import User from "../models/userModel.js";
 
 // Send a Friend Request
 export const sendFriendRequest = async (req, res) => {
@@ -30,25 +32,6 @@ export const sendFriendRequest = async (req, res) => {
       return res.status(403).json({ message: "You cannot send a friend request to this user." });
     }
 
-    // Check if the user has canceled a friend request within the last 14 days
-    const recentCancelledRequest = await FriendRequest.findOne({
-      senderId,
-      receiverId,
-      status: "cancelled",
-    });
-
-    if (recentCancelledRequest) {
-      const cancellationTime = recentCancelledRequest.cancelledAt;
-      const currentTime = new Date();
-      const differenceInDays = (currentTime - cancellationTime) / (1000 * 3600 * 24); // Difference in days
-
-      if (differenceInDays < 14) {
-        return res.status(400).json({
-          message: "You cannot send a friend request within 14 days of canceling a previous one.",
-        });
-      }
-    }
-
     // Check for an existing friend request
     const existingRequest = await FriendRequest.findOne({
       senderId,
@@ -62,6 +45,11 @@ export const sendFriendRequest = async (req, res) => {
       });
     }
 
+    // Fetch the sender's details (avatar and fullName)
+    const sender = await User.findById(senderId);
+    const senderAvatar = sender?.avatar || ''; // Default to empty string if no avatar is found
+    const senderFullName = sender?.fullName || ''; // Default to "Unknown User" if fullName is not found
+
     // Create the friend request
     const friendRequest = new FriendRequest({
       senderId,
@@ -71,6 +59,15 @@ export const sendFriendRequest = async (req, res) => {
     });
 
     await friendRequest.save();
+
+    // Send notification to the receiver
+    await Notification.create({
+      userId: receiverId,
+      avatar: senderAvatar,
+      fullName: senderFullName, // Include fullName in notification
+      type: "friend_request",
+      message: `${senderFullName} has sent you a friend request.`,
+    });
 
     res.status(201).json({
       message: "Friend request sent successfully.",
@@ -125,6 +122,36 @@ export const cancelFriendRequest = async (req, res) => {
   }
 };
 
+// Get Cancelled Friend Requests
+export const getCancelledFriendRequests = async (req, res) => {
+  const userId = req.user.id; // Authenticated user's ID
+
+  try {
+    // Fetch cancelled friend requests where the user is the sender
+    const cancelledRequests = await FriendRequest.find({
+      senderId: userId, // Only fetch requests where the user is the sender
+      status: "cancelled", // Ensure we're only fetching cancelled requests
+    })
+      .populate("senderId", "fullName userName avatar") // Populate sender's details
+      .populate("receiverId", "fullName userName avatar") // Populate receiver's details
+      .sort({ cancelledAt: -1 }); // Sort by the cancellation date
+
+    // Check if there are any cancelled requests
+    // if (!cancelledRequests || cancelledRequests.length === 0) {
+    //   return res.status(404).json({ message: "No cancelled friend requests found." });
+    // }
+
+    // Send the response with cancelledRequests
+    res.status(200).json({
+      message: "Cancelled friend requests fetched successfully.",
+      cancelledRequests, // Return the cancelledRequests data here
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while fetching cancelled friend requests." });
+  }
+};
+
 // Get Pending Friend Requests
 export const getPendingFriendRequests = async (req, res) => {
   const userId = req.user.id; // Authenticated user's ID
@@ -136,7 +163,7 @@ export const getPendingFriendRequests = async (req, res) => {
       status: "pending",
     })
       .populate("senderId", "fullName userName avatar") // Populate sender's details
-      .populate("receiverId", "userName userName avatar") // Populate receiver's details
+      .populate("receiverId", "fullName userName avatar") // Populate receiver's details
       .sort({ createdAt: -1 }); // Sort by the latest request
 
     res.status(200).json({
@@ -148,7 +175,6 @@ export const getPendingFriendRequests = async (req, res) => {
     res.status(500).json({ message: "An error occurred while fetching pending friend requests." });
   }
 };
-
 // Accept a Friend Request
 export const acceptFriendRequest = async (req, res) => {
   const { requestId } = req.body; // ID of the friend request to accept
@@ -181,7 +207,21 @@ export const acceptFriendRequest = async (req, res) => {
 
     // Update the status of the friend request to 'accepted'
     friendRequest.status = "accepted";
-    friendRequest.save();
+    await friendRequest.save();
+
+    // Fetch the sender's details (avatar and fullName)
+    const sender = await User.findById(friendRequest.senderId);
+    const senderAvatar = sender?.avatar || ''; // Default to empty string if no avatar is found
+    const senderFullName = sender?.fullName || 'Unknown User'; // Default to "Unknown User" if fullName is not found
+
+    // Send notification to the sender (that their request was accepted)
+    await Notification.create({
+      userId: friendRequest.senderId, // Sender of the friend request
+      avatar: senderAvatar,  // Include avatar in notification
+      fullName: senderFullName, // Include fullName in notification
+      type: "friend_request",
+      message: `${senderFullName} has accepted your friend request.`,
+    });
 
     res.status(200).json({
       message: "Friend request accepted successfully.",
@@ -192,3 +232,4 @@ export const acceptFriendRequest = async (req, res) => {
     res.status(500).json({ message: "An error occurred while accepting the friend request." });
   }
 };
+

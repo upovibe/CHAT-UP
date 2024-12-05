@@ -176,10 +176,8 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
             {/* Dialog Content */}
             <DialogContent>
               <DialogHeader>
-              <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
+                <DialogTitle>{""}</DialogTitle>
+                <DialogDescription>{""}</DialogDescription>
               </DialogHeader>
               {activeContent}
             </DialogContent>
