@@ -1,5 +1,30 @@
 import Notification from '../models/notification.js';
 
+// Create a new Notification
+export const createNotification = async (req, res) => {
+  const { userId, message, type } = req.body;
+
+  try {
+    // Save the notification in the database
+    const notification = await Notification.create({
+      userId,
+      message,
+      type,
+    });
+
+    // Log the notification details
+    console.log('Notification created:', notification);
+
+    // Emit the notification to the specific user via Socket.IO
+    req.io.to(userId).emit('notification', notification);
+
+    res.status(201).json(notification);
+  } catch (error) {
+    console.error('Failed to create notification:', error);
+    res.status(500).json({ message: 'Failed to create notification.' });
+  }
+};
+
 // Get all notifications for the authenticated user
 export const getNotifications = async (req, res) => {
   const userId = req.user.id; // Authenticated user's ID
