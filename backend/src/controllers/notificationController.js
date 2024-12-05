@@ -13,7 +13,7 @@ export const createNotification = async (req, res) => {
     });
 
     // Log the notification details
-    console.log('Notification created:', notification);
+    // console.log('Notification created:', notification);
 
     // Emit the notification to the specific user via Socket.IO
     req.io.to(userId).emit('notification', notification);
