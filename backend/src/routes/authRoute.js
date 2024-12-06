@@ -1,5 +1,5 @@
 import express from 'express';
-import { signup,login, logout, updateProfile, checkAuth } from '../controllers/authController.js';
+import { signup, login, logout, updateProfile, checkAuth, updateVisibilityPreferences, getVisibilityPreferences } from '../controllers/authController.js';
 import { protectRoute } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -18,5 +18,11 @@ router.put('/update-profile', protectRoute, updateProfile);
 
 // Check Authentication routes
 router.get('/status', protectRoute, checkAuth);
+
+// Update visibility preferences route
+router.put('/visibility-preferences', protectRoute, updateVisibilityPreferences);
+
+// Get visibility preferences route
+router.get('/visibility-preferences', protectRoute, getVisibilityPreferences);
 
 export default router;

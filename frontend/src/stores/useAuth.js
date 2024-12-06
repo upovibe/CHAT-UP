@@ -3,6 +3,11 @@ import { create } from "zustand";
 
 export const useAuth = create((set) => ({
   authUser: null,
+  visibilityPreferences: {
+    showEmail: true,
+    showPhone: true,
+    showStatus: true,
+  },
   isSigingUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
@@ -12,12 +17,43 @@ export const useAuth = create((set) => ({
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/status");
-      set({ authUser: res.data.user });
+      set({
+        authUser: res.data.user,
+        visibilityPreferences: res.data.user?.visibilityPreferences || {
+          showEmail: true,
+          showPhone: true,
+          showStatus: true,
+        },
+      });
     } catch (e) {
       console.error("Auth check failed:", e.message);
       set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
+    }
+  },
+
+  // Update visibility preferences
+  updateVisibilityPreferences: async (newPreferences) => {
+    try {
+      set({ isUpdatingProfile: true });
+      const res = await axiosInstance.put("/auth/visibility-preferences", {
+        visibilityPreferences: newPreferences,
+      });
+
+      if (res.data?.user) {
+        set({
+          authUser: res.data.user,
+          visibilityPreferences: res.data.user.visibilityPreferences,
+        });
+      } else {
+        console.warn("Update succeeded but user data was not returned.");
+      }
+    } catch (e) {
+      console.error("Error updating visibility preferences:", e.message);
+      throw new Error(e.response?.data?.message || "Failed to update preferences.");
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 
@@ -39,17 +75,23 @@ export const useAuth = create((set) => ({
     }
   },
 
+  // Login method
   login: async (loginData) => {
     try {
       set({ isLoggingIn: true });
       const res = await axiosInstance.post("/auth/login", loginData);
-  
+
       if (res.data.user) {
-        set({ authUser: res.data.user });
+        set({
+          authUser: res.data.user,
+          visibilityPreferences: res.data.user.visibilityPreferences || {
+            showEmail: true,
+            showPhone: true,
+            showStatus: true,
+          },
+        });
         return res.data.user;
       }
-  
-      // throw new Error("Unexpected response format");
     } catch (e) {
       console.error("Login error:", e.response?.data || e.message);
       throw e;
@@ -57,7 +99,7 @@ export const useAuth = create((set) => ({
       set({ isLoggingIn: false });
     }
   },
-  
+
 
   // Logout method
   logout: async () => {
@@ -90,5 +132,5 @@ export const useAuth = create((set) => ({
       set({ isUpdatingProfile: false });
     }
   },
-  
+
 }));

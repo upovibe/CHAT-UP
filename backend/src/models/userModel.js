@@ -67,6 +67,11 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    visibilityPreferences: {
+      showEmail: { type: Boolean, default: true },
+      showPhone: { type: Boolean, default: true },
+      showStatus: { type: Boolean, default: true },
+    },
   },
   { timestamps: true }
 );

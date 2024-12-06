@@ -311,7 +311,7 @@ export const getFriendsList = async (req, res) => {
       $or: [{ senderId: userId }, { receiverId: userId }],
       status: "accepted",
     })
-      .populate("senderId", "fullName userName avatar") 
+      .populate("senderId", "fullName userName phoneNumber avatar email createdAt status isOnline lastSeenr") 
       .populate("receiverId", "fullName userName phoneNumber avatar email createdAt status isOnline lastSeen")
       .sort({ updatedAt: -1 });
 
