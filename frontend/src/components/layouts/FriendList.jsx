@@ -13,7 +13,6 @@ import {
   Trash,
   AlertTriangle,
   ShieldOff,
-  Share,
   Share2,
 } from "lucide-react";
 import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";

@@ -1,7 +1,7 @@
 import { axiosInstance } from "@/lib/axios";
 import { create } from "zustand";
 
-export const useFriendRequests = create((set) => ({
+export const useFriendRequests = create((set, get) => ({
   // State variables
   loading: false,
   error: null,
@@ -10,6 +10,17 @@ export const useFriendRequests = create((set) => ({
   cancelledRequests: [], 
   receivedRequests: [],
   friendsList: [],
+
+  // Getters (computed state)
+  get pendingCount() {
+    return get().pendingRequests.length;
+  },
+  get cancelledCount() {
+    return get().cancelledRequests.length;
+  },
+  get receivedCount() {
+    return get().receivedRequests.length;
+  },
 
   // Actions
 
@@ -88,8 +99,8 @@ export const useFriendRequests = create((set) => ({
     }
   },
 
-   // Fetch Received Friend Requests
-   getReceivedFriendRequests: async () => {
+  // Fetch Received Friend Requests
+  getReceivedFriendRequests: async () => {
     set({ loading: true, error: null });
 
     try {
@@ -122,7 +133,7 @@ export const useFriendRequests = create((set) => ({
       });
 
       // Fetch updated received requests
-      await set.getState().getReceivedFriendRequests();
+      await get().getReceivedFriendRequests();
     } catch (error) {
       set({
         error: error.response?.data?.message || "An error occurred",
@@ -146,7 +157,7 @@ export const useFriendRequests = create((set) => ({
       });
 
       // Fetch updated received requests
-      await set.getState().getReceivedFriendRequests();
+      await get().getReceivedFriendRequests();
     } catch (error){
       set({
         error: error.response?.data?.message || "An error occurred",

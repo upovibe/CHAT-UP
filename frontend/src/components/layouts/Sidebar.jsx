@@ -3,10 +3,7 @@ import PropTypes from "prop-types";
 import {
   Ban,
   Edit,
-  MessagesSquare,
-  MessageSquareDotIcon,
   Users,
-  Rss,
   Mail,
   ArrowLeftFromLineIcon,
   ArrowRightFromLineIcon,
@@ -26,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import Settings from "@/pages/settings/Settings";
 import { Button } from "../ui/button";
+import { useFriendRequests } from "@/stores/useFriendRequests";
 import FriendRequests from "./FriendRequests";
 
 const Sidebar = ({ isHidden, onProfileClick }) => {
@@ -33,6 +31,9 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [activeContent, setActiveContent] = useState(null);
+  const { pendingCount, cancelledCount, receivedCount } = useFriendRequests();  
+
+  const totalNotifications = pendingCount + cancelledCount + receivedCount;
 
   const toggleCollapse = () => setIsCollapsed((prev) => !prev);
 
@@ -55,38 +56,17 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
       icon: <Mail className="text-gray-400" />,
       label: "Inbox",
       notificationCount: 2,
-      totalCount: 5,
     },
     {
       icon: <Users className="text-gray-400" />,
       label: "All",
-      notificationCount: 7,
-      totalCount: 100,
+      notificationCount: totalNotifications,
       content: <FriendRequests />,
-    },
-    {
-      icon: <MessageSquareDotIcon className="text-gray-400" />,
-      label: "Live Chat",
-      notificationCount: 15,
-      totalCount: 20,
-    },
-    {
-      icon: <MessagesSquare className="text-gray-400" />,
-      label: "Groups",
-      notificationCount: 5,
-      totalCount: 10,
-    },
-    {
-      icon: <Rss className="text-gray-400" />,
-      label: "Channels",
-      notificationCount: 2,
-      totalCount: 12,
     },
     {
       icon: <Ban className="text-gray-400" />,
       label: "Blocked",
-      notificationCount: null,
-      totalCount: 3,
+      notificationCount: 1,
     },
   ];
 
@@ -135,40 +115,23 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
             {/* Dialog Trigger wraps the `li` */}
             <DialogTrigger asChild>
               <li
-                className={`p-2 flex items-center justify-between cursor-pointer hover:text-blue-500 border-l-4 border-transparent hover:border-blue-600 hover:bg-blue-100/50 transition-all ${
+                className={`p-2 flex items-center cursor-pointer hover:text-blue-500 border-l-4 border-transparent hover:border-blue-600 hover:bg-blue-100/50 transition-all ${
                   isCollapsed ? "mr-0 justify-center" : "mr-2 lg:rounded-r-full"
                 }`}
                 onClick={() => setActiveContent(item.content)}
               >
                 <div className="relative flex items-center gap-3">
-                  <div className="relative">
-                    {item.notificationCount && isCollapsed && (
-                      <Badge
-                        variant="destructive"
-                        className="absolute -top-1 -right-1 text-xs"
-                      >
-                        {item.notificationCount}
-                      </Badge>
-                    )}
-                    {item.icon}
-                  </div>
+                {item.icon}
                   {!isCollapsed && (
-                    <div className="flex items-center gap-2">
                       <h3 className="font-bold whitespace-nowrap">
-                        {item.label}
-                      </h3>
-                      {item.notificationCount && (
-                        <Badge variant="destructive">
-                          {item.notificationCount}
-                        </Badge>
-                      )}
-                    </div>
+                      {item.label}
+                    </h3>
                   )}
                 </div>
                 {!isCollapsed && (
-                  <span className="text-gray-400 font-bold">
-                    {item.totalCount}
-                  </span>
+                  <Badge className="text-white bg-blue-500 font-extrabold py-[0.5px] flex items-center ml-auto">
+                    {item.notificationCount}
+                  </Badge>
                 )}
               </li>
             </DialogTrigger>

@@ -311,9 +311,9 @@ export const getFriendsList = async (req, res) => {
       $or: [{ senderId: userId }, { receiverId: userId }],
       status: "accepted",
     })
-      .populate("senderId", "fullName userName avatar email status isOnline lastSeen") // Populate sender's details
-      .populate("receiverId", "fullName userName avatar email status isOnline lastSeen") // Populate receiver's details
-      .sort({ updatedAt: -1 }); // Sort by the latest accepted request
+      .populate("senderId", "fullName userName avatar") 
+      .populate("receiverId", "fullName userName phoneNumber avatar email createdAt status isOnline lastSeen")
+      .sort({ updatedAt: -1 });
 
     // Transform the data to get a clean list of friends and exclude the authenticated user
     const friendsList = friends
@@ -333,10 +333,16 @@ export const getFriendsList = async (req, res) => {
           fullName: friend.fullName,
           userName: friend.userName,
           avatar: friend.avatar,
-          email: friend.email, // Add email
-          status: friend.status, // Add status
-          isOnline: friend.isOnline, // Add online status
-          lastSeen: friend.lastSeen, // Add last seen
+          phoneNumber: friend.phoneNumber,
+          email: friend.email,
+          createdAt: friend.createdAt,
+          status: friend.status,
+          isOnline: friend.isOnline,
+          lastSeen: friend.lastSeen,
+          email: friend.email,
+          status: friend.status,
+          isOnline: friend.isOnline,
+          lastSeen: friend.lastSeen,
         };
       })
       .filter((friend) => friend !== null);

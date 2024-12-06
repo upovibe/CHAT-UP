@@ -24,10 +24,9 @@ const Home = () => {
 
   const handleProfileInfoClick = (contact = null) => {
     const profile = contact || authUser;
-    console.log("Selected Profile:", profile); // Log the correct profile data
+    console.log("Selected Profile:", profile);
     setSelectedProfile(profile);
 
-    // Only toggle visibility if it's not already visible
     if (!isProfileVisible) {
       setIsProfileVisible(true);
     }
@@ -37,7 +36,7 @@ const Home = () => {
     if (isProfileVisible) {
       setIsProfileVisible(false);
     } else {
-      setSelectedProfile(authUser); // Default to authUser when toggling
+      setSelectedProfile(authUser);
       setIsProfileVisible(true);
     }
   };

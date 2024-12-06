@@ -28,19 +28,25 @@ const FriendRequests = () => {
     cancelledRequests,
     receivedRequests,
     loading,
+    pendingCount,
+    cancelledCount,
+    receivedCount,
   } = useFriendRequests();
   const [sentRequests, setSentRequests] = useState([]);
   const [cancelledSentRequests, setCancelledSentRequests] = useState([]);
-  const [cancelLoading, setCancelLoading] = useState(false); // Add this state
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   useEffect(() => {
     getPendingFriendRequests();
     getCancelledFriendRequests();
     getReceivedFriendRequests();
-  }, [getPendingFriendRequests, getCancelledFriendRequests, getReceivedFriendRequests]);
+  }, [
+    getPendingFriendRequests,
+    getCancelledFriendRequests,
+    getReceivedFriendRequests,
+  ]);
 
   useEffect(() => {
-    // Filter requests where the logged-in user is the sender for pending requests
     if (authUser) {
       const filteredRequests = pendingRequests.filter(
         (request) => request.senderId._id === authUser._id
@@ -50,7 +56,6 @@ const FriendRequests = () => {
   }, [pendingRequests, authUser]);
 
   useEffect(() => {
-    // Filter requests where the logged-in user is the sender for cancelled requests
     if (authUser) {
       const filteredRequests = cancelledRequests.filter(
         (request) => request.senderId._id === authUser._id
@@ -76,14 +81,15 @@ const FriendRequests = () => {
     await getReceivedFriendRequests();
   };
 
-
   return (
     <div className="py-2">
       <Tabs defaultValue="pending" className="">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="canceled">Cancelled</TabsTrigger>
-          <TabsTrigger value="recieved">Recieved</TabsTrigger>
+          <TabsTrigger value="pending">Pending ({pendingCount})</TabsTrigger>
+          <TabsTrigger value="canceled">
+            Cancelled ({cancelledCount})
+          </TabsTrigger>
+          <TabsTrigger value="recieved">Received ({receivedCount})</TabsTrigger>
         </TabsList>
 
         {/* Pending Tab */}
@@ -131,7 +137,7 @@ const FriendRequests = () => {
                       onClick={() =>
                         handleCancelRequest(request.receiverId._id)
                       }
-                      disabled={cancelLoading} // Disable while loading
+                      disabled={cancelLoading}
                     >
                       {cancelLoading ? (
                         <Lottie
@@ -254,7 +260,7 @@ const FriendRequests = () => {
                         className="text-white bg-green-500 hover:bg-green-600"
                         onClick={() => handleAcceptRequest(request._id)}
                       >
-                        <UserCheck/>
+                        <UserCheck />
                       </Toggle>
                       <Toggle
                         aria-label="Reject friend request"
@@ -262,7 +268,7 @@ const FriendRequests = () => {
                         className="text-white bg-red-500 hover:bg-red-600"
                         onClick={() => handleRejectRequest(request._id)}
                       >
-                      <UserX/>
+                        <UserX />
                       </Toggle>
                     </div>
                   </li>
