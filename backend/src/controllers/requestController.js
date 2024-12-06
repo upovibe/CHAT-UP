@@ -175,6 +175,30 @@ export const getPendingFriendRequests = async (req, res) => {
     res.status(500).json({ message: "An error occurred while fetching pending friend requests." });
   }
 };
+
+// Get Received Friend Requests (requests sent to the logged-in user)
+export const getReceivedFriendRequests = async (req, res) => {
+  const userId = req.user.id; // Authenticated user's ID
+
+  try {
+    // Fetch friend requests where the logged-in user is the receiver and the status is 'pending'
+    const receivedRequests = await FriendRequest.find({
+      receiverId: userId,
+      status: "pending",
+    })
+      .populate("senderId", "fullName userName avatar") // Populate sender's details
+      .sort({ createdAt: -1 }); // Sort by the latest request
+
+    res.status(200).json({
+      message: "Received friend requests fetched successfully.",
+      receivedRequests,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while fetching received friend requests." });
+  }
+};
+
 // Accept a Friend Request
 export const acceptFriendRequest = async (req, res) => {
   const { requestId } = req.body; // ID of the friend request to accept
@@ -233,3 +257,98 @@ export const acceptFriendRequest = async (req, res) => {
   }
 };
 
+// Reject a Friend Request
+export const rejectFriendRequest = async (req, res) => {
+  const { requestId } = req.body; // ID of the friend request to reject
+  const userId = req.user.id; // Authenticated user's ID
+
+  try {
+    // Validate the requestId
+    if (!mongoose.Types.ObjectId.isValid(requestId)) {
+      return res.status(400).json({ message: "Invalid friend request ID." });
+    }
+
+    // Find the friend request
+    const friendRequest = await FriendRequest.findById(requestId);
+
+    if (!friendRequest) {
+      return res.status(404).json({ message: "Friend request not found." });
+    }
+
+    // Ensure the user is the receiver of the friend request
+    if (friendRequest.receiverId.toString() !== userId) {
+      return res.status(403).json({ message: "You are not authorized to reject this friend request." });
+    }
+
+    // Check if the request is still pending
+    if (friendRequest.status !== "pending") {
+      return res.status(400).json({
+        message: `Cannot reject this request. Current status: ${friendRequest.status}.`,
+      });
+    }
+
+    // Update the status of the friend request to 'rejected'
+    friendRequest.status = "rejected";
+    await friendRequest.save();
+
+    res.status(200).json({
+      message: "Friend request rejected successfully.",
+      friendRequest,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while rejecting the friend request." });
+  }
+};
+
+// Get Friends List
+export const getFriendsList = async (req, res) => {
+  const userId = req.user.id; // Authenticated user's ID
+
+  try {
+    // Fetch friends where the user is either the sender or receiver and status is "accepted"
+    const friends = await FriendRequest.find({
+      $or: [{ senderId: userId }, { receiverId: userId }],
+      status: "accepted",
+    })
+      .populate("senderId", "fullName userName avatar email status isOnline lastSeen") // Populate sender's details
+      .populate("receiverId", "fullName userName avatar email status isOnline lastSeen") // Populate receiver's details
+      .sort({ updatedAt: -1 }); // Sort by the latest accepted request
+
+    // Transform the data to get a clean list of friends and exclude the authenticated user
+    const friendsList = friends
+      .map((friendRequest) => {
+        const friend =
+          friendRequest.senderId._id.toString() === userId
+            ? friendRequest.receiverId
+            : friendRequest.senderId;
+
+        // Exclude the authenticated user from the list
+        if (friend._id.toString() === userId) {
+          return null; // Skip the authenticated user
+        }
+
+        return {
+          id: friend._id,
+          fullName: friend.fullName,
+          userName: friend.userName,
+          avatar: friend.avatar,
+          email: friend.email, // Add email
+          status: friend.status, // Add status
+          isOnline: friend.isOnline, // Add online status
+          lastSeen: friend.lastSeen, // Add last seen
+        };
+      })
+      .filter((friend) => friend !== null);
+
+    res.status(200).json({
+      message: "Friends list fetched successfully.",
+      friends: friendsList,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while fetching the friends list.",
+    });
+  }
+};

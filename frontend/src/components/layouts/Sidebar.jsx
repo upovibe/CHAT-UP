@@ -232,7 +232,7 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
 Sidebar.propTypes = {
   isHidden: PropTypes.bool,
   toggleSidebar: PropTypes.func,
-  onProfileClick: PropTypes.func,
+  onProfileClick: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/stores/useAuth";
 import SkeletonList from "@/components/layouts/SkeletonList";
 import { Toggle } from "@/components/ui/toggle";
-import { UserX } from "lucide-react";
+import { UserCheck, UserMinus, UserX } from "lucide-react";
 import Lottie from "lottie-react";
 import loadingAnimation from "@/assets/animations/Loader.json";
 import {
@@ -19,10 +19,14 @@ const FriendRequests = () => {
   const { authUser } = useAuth();
   const {
     getPendingFriendRequests,
-    cancelFriendRequest,
     getCancelledFriendRequests,
+    cancelFriendRequest,
+    getReceivedFriendRequests,
+    acceptFriendRequest,
+    rejectFriendRequest,
     pendingRequests,
     cancelledRequests,
+    receivedRequests,
     loading,
   } = useFriendRequests();
   const [sentRequests, setSentRequests] = useState([]);
@@ -30,10 +34,10 @@ const FriendRequests = () => {
   const [cancelLoading, setCancelLoading] = useState(false); // Add this state
 
   useEffect(() => {
-    // Fetch pending and cancelled friend requests on component mount
     getPendingFriendRequests();
     getCancelledFriendRequests();
-  }, [getPendingFriendRequests, getCancelledFriendRequests]);
+    getReceivedFriendRequests();
+  }, [getPendingFriendRequests, getCancelledFriendRequests, getReceivedFriendRequests]);
 
   useEffect(() => {
     // Filter requests where the logged-in user is the sender for pending requests
@@ -62,13 +66,24 @@ const FriendRequests = () => {
     setCancelLoading(false);
   };
 
+  const handleAcceptRequest = async (requestId) => {
+    await acceptFriendRequest(requestId);
+    await getReceivedFriendRequests();
+  };
+
+  const handleRejectRequest = async (requestId) => {
+    await rejectFriendRequest(requestId);
+    await getReceivedFriendRequests();
+  };
+
+
   return (
     <div className="py-2">
       <Tabs defaultValue="pending" className="">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="pending">Pending</TabsTrigger>
           <TabsTrigger value="canceled">Cancelled</TabsTrigger>
-          <TabsTrigger value="accepted">Accepted</TabsTrigger>
+          <TabsTrigger value="recieved">Recieved</TabsTrigger>
         </TabsList>
 
         {/* Pending Tab */}
@@ -125,7 +140,7 @@ const FriendRequests = () => {
                           loop={true}
                         />
                       ) : (
-                        <UserX />
+                        <UserMinus />
                       )}
                     </Toggle>
                   </li>
@@ -196,8 +211,66 @@ const FriendRequests = () => {
           </div>
         </TabsContent>
 
-        {/* Accepted Tab */}
-        <TabsContent value="accepted">Accepted</TabsContent>
+        {/* Received Tab */}
+        <TabsContent value="recieved">
+          <div className="w-full h-[86vh] md:h-[70vh] lg:h-[60vh] overflow-auto py-2">
+            {loading ? (
+              <SkeletonList />
+            ) : receivedRequests.length === 0 ? (
+              <p className="text-center text-gray-500">No received requests.</p>
+            ) : (
+              <ul>
+                {receivedRequests.map((request) => (
+                  <li
+                    key={request._id}
+                    className="flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-800 cursor-pointer transition-all ease-linear duration-200 border-b border-t py-2 px-1"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Avatar>
+                        <AvatarImage src={request.senderId.avatar} />
+                        <AvatarFallback>
+                          {request.senderId.fullName
+                            ? `${request.senderId.fullName.charAt(
+                                0
+                              )}${request.senderId.fullName
+                                .split(" ")[1]
+                                ?.charAt(0)}`
+                            : "?"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {request.senderId.fullName}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          @{request.senderId.userName}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Toggle
+                        aria-label="Accept friend request"
+                        size="sm"
+                        className="text-white bg-green-500 hover:bg-green-600"
+                        onClick={() => handleAcceptRequest(request._id)}
+                      >
+                        <UserCheck/>
+                      </Toggle>
+                      <Toggle
+                        aria-label="Reject friend request"
+                        size="sm"
+                        className="text-white bg-red-500 hover:bg-red-600"
+                        onClick={() => handleRejectRequest(request._id)}
+                      >
+                      <UserX/>
+                      </Toggle>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </TabsContent>
       </Tabs>
     </div>
   );

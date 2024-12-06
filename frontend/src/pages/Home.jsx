@@ -2,13 +2,16 @@ import { useState } from "react";
 import Sidebar from "@/components/layouts/Sidebar";
 import FriendList from "@/components/layouts/FriendList";
 import ChatBox from "@/components/layouts/ChatBox";
-import AuthorInfo from "@/components/layouts/AuthorInfo";
+import AuthorProfileInfo from "@/components/layouts/AuthorProfileInfo";
+import { useAuth } from "@/stores/useAuth";
 
 const Home = () => {
   const [selectedContact, setSelectedContact] = useState(null);
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [isProfileVisible, setIsProfileVisible] = useState(false);
   const [isSidebarHidden, setIsSidebarHidden] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+  const { authUser } = useAuth();
 
   const handleContactListChat = (contact) => {
     setSelectedContact(contact);
@@ -19,12 +22,24 @@ const Home = () => {
     setIsChatVisible(false);
   };
 
-  const handleProfileInfoClick = () => {
-    setIsProfileVisible(true);
+  const handleProfileInfoClick = (contact = null) => {
+    const profile = contact || authUser;
+    console.log("Selected Profile:", profile); // Log the correct profile data
+    setSelectedProfile(profile);
+
+    // Only toggle visibility if it's not already visible
+    if (!isProfileVisible) {
+      setIsProfileVisible(true);
+    }
   };
 
   const handleProfileToggle = () => {
-    setIsProfileVisible((prev) => !prev);
+    if (isProfileVisible) {
+      setIsProfileVisible(false);
+    } else {
+      setSelectedProfile(authUser); // Default to authUser when toggling
+      setIsProfileVisible(true);
+    }
   };
 
   const handleProfileClose = () => {
@@ -63,7 +78,11 @@ const Home = () => {
         />
 
         {/* Profile Info Overlay (for small/medium screens) */}
-        <AuthorInfo isVisible={isProfileVisible} onClose={handleProfileClose} />
+        <AuthorProfileInfo
+          isVisible={isProfileVisible}
+          onClose={handleProfileClose}
+          selectedProfile={selectedProfile} 
+        />
       </div>
     </div>
   );

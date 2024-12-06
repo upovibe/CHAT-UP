@@ -7,7 +7,9 @@ export const useFriendRequests = create((set) => ({
   error: null,
   success: null,
   pendingRequests: [],
-  cancelledRequests: [], // Updated to reflect cancelled spelling
+  cancelledRequests: [], 
+  receivedRequests: [],
+  friendsList: [],
 
   // Actions
 
@@ -76,6 +78,92 @@ export const useFriendRequests = create((set) => ({
 
       set({
         pendingRequests: response.data.pendingRequests,
+        loading: false,
+      });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "An error occurred",
+        loading: false,
+      });
+    }
+  },
+
+   // Fetch Received Friend Requests
+   getReceivedFriendRequests: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      const response = await axiosInstance.get("/friend-requests/received");
+
+      set({
+        receivedRequests: response.data.receivedRequests,
+        loading: false,
+      });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "An error occurred",
+        loading: false,
+      });
+    }
+  },
+
+  // Accept Friend Request
+  acceptFriendRequest: async (requestId) => {
+    set({ loading: true, error: null });
+
+    try {
+      const response = await axiosInstance.post("/friend-requests/accept", {
+        requestId,
+      });
+
+      set({
+        success: response.data.message,
+        loading: false,
+      });
+
+      // Fetch updated received requests
+      await set.getState().getReceivedFriendRequests();
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "An error occurred",
+        loading: false,
+      });
+    }
+  },
+
+  // Reject Friend Request
+  rejectFriendRequest: async (requestId) => {
+    set({ loading: true, error: null });
+
+    try {
+      const response = await axiosInstance.post("/friend-requests/reject", {
+        requestId,
+      });
+
+      set({
+        success: response.data.message,
+        loading: false,
+      });
+
+      // Fetch updated received requests
+      await set.getState().getReceivedFriendRequests();
+    } catch (error){
+      set({
+        error: error.response?.data?.message || "An error occurred",
+        loading: false,
+      });
+    }
+  },
+
+  // Get Friends List (new action)
+  getFriendsList: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      const response = await axiosInstance.get("/friend-requests/friends");
+
+      set({
+        friendsList: response.data.friends,  // Save friends data
         loading: false,
       });
     } catch (error) {
