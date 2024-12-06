@@ -269,3 +269,46 @@ export const checkAuth = (req, res) => {
     });
   }
 };
+
+// Update visibility preferences
+export const updateVisibilityPreferences = async (req, res) => {
+  try {
+    const userId = req.user.id; // From the protectRoute middleware
+    const { showEmail, showPhone, showStatus } = req.body;
+
+    // Update the user's visibility preferences in the database
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { visibilityPreferences: { showEmail, showPhone, showStatus } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ preferences: user.visibilityPreferences });
+  } catch (error) {
+    console.error('Error updating visibility preferences:', error);
+    res.status(500).json({ message: 'Failed to update visibility preferences' });
+  }
+};
+
+// Get visibility preferences
+export const getVisibilityPreferences = async (req, res) => {
+  try {
+    const userId = req.user.id; // From the protectRoute middleware
+
+    // Fetch the user's visibility preferences
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ preferences: user.visibilityPreferences });
+  } catch (error) {
+    console.error('Error fetching visibility preferences:', error);
+    res.status(500).json({ message: 'Failed to fetch visibility preferences' });
+  }
+};
