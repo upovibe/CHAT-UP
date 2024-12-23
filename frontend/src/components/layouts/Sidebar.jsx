@@ -8,6 +8,7 @@ import {
   ArrowLeftFromLineIcon,
   ArrowRightFromLineIcon,
   SettingsIcon,
+  UserCheck,
 } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { useState, useEffect } from "react";
@@ -24,16 +25,18 @@ import {
 import Settings from "@/pages/settings/Settings";
 import { Button } from "../ui/button";
 import { useFriendRequests } from "@/stores/useFriendRequests";
-import FriendRequests from "./FriendRequests";
+import FriendRequests from "@/components/layouts/FriendRequests";
+import MyFriendList from "@/components/layouts/MyFriendsList"
 
 const Sidebar = ({ isHidden, onProfileClick }) => {
   const { authUser } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [activeContent, setActiveContent] = useState(null);
-  const { pendingCount, cancelledCount, receivedCount } = useFriendRequests();  
+  const { pendingCount, cancelledCount, receivedCount, totalFriends } = useFriendRequests();  
 
-  const totalNotifications = pendingCount + cancelledCount + receivedCount;
+  const totalRequests = pendingCount + cancelledCount + receivedCount;
+
 
   const toggleCollapse = () => setIsCollapsed((prev) => !prev);
 
@@ -58,10 +61,16 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
       notificationCount: 2,
     },
     {
-      icon: <Users className="text-gray-400" />,
-      label: "All",
-      notificationCount: totalNotifications,
+      icon: <UserCheck className="text-gray-400" />,
+      label: "Requests",
+      notificationCount: totalRequests,
       content: <FriendRequests />,
+    },    
+    {
+      icon: <Users className="text-gray-400" />,
+      label: "My friends",
+      notificationCount: totalFriends,
+      content: <MyFriendList />,
     },
     {
       icon: <Ban className="text-gray-400" />,

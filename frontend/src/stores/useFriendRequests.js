@@ -7,20 +7,13 @@ export const useFriendRequests = create((set, get) => ({
   error: null,
   success: null,
   pendingRequests: [],
-  cancelledRequests: [], 
+  cancelledRequests: [],
   receivedRequests: [],
   friendsList: [],
-
-  // Getters (computed state)
-  get pendingCount() {
-    return get().pendingRequests.length;
-  },
-  get cancelledCount() {
-    return get().cancelledRequests.length;
-  },
-  get receivedCount() {
-    return get().receivedRequests.length;
-  },
+  pendingCount: 0,
+  cancelledCount: 0,
+  receivedCount: 0,
+  totalFriends: 0,
 
   // Actions
 
@@ -73,6 +66,7 @@ export const useFriendRequests = create((set, get) => ({
       const response = await axiosInstance.get("/friend-requests/cancelled");
       set({
         cancelledRequests: response.data.cancelledRequests,
+        cancelledCount: response.data.cancelledRequests.length,
         loading: false,
       });
     } catch (error) {
@@ -89,6 +83,7 @@ export const useFriendRequests = create((set, get) => ({
 
       set({
         pendingRequests: response.data.pendingRequests,
+        pendingCount: response.data.pendingRequests.length,
         loading: false,
       });
     } catch (error) {
@@ -108,6 +103,7 @@ export const useFriendRequests = create((set, get) => ({
 
       set({
         receivedRequests: response.data.receivedRequests,
+        receivedCount: response.data.receivedRequests.length,
         loading: false,
       });
     } catch (error) {
@@ -158,7 +154,7 @@ export const useFriendRequests = create((set, get) => ({
 
       // Fetch updated received requests
       await get().getReceivedFriendRequests();
-    } catch (error){
+    } catch (error) {
       set({
         error: error.response?.data?.message || "An error occurred",
         loading: false,
@@ -174,7 +170,8 @@ export const useFriendRequests = create((set, get) => ({
       const response = await axiosInstance.get("/friend-requests/friends");
 
       set({
-        friendsList: response.data.friends,  // Save friends data
+        friendsList: response.data.friends,
+        totalFriends: response.data.friends.length,
         loading: false,
       });
     } catch (error) {

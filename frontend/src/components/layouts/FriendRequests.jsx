@@ -8,6 +8,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { UserCheck, UserMinus, UserX } from "lucide-react";
 import Lottie from "lottie-react";
 import loadingAnimation from "@/assets/animations/Loader.json";
+import { Badge } from "@/components/ui/badge"
 import {
   Tooltip,
   TooltipContent,
@@ -35,6 +36,7 @@ const FriendRequests = () => {
   const [sentRequests, setSentRequests] = useState([]);
   const [cancelledSentRequests, setCancelledSentRequests] = useState([]);
   const [cancelLoading, setCancelLoading] = useState(false);
+
 
   useEffect(() => {
     getPendingFriendRequests();
@@ -81,20 +83,21 @@ const FriendRequests = () => {
     await getReceivedFriendRequests();
   };
 
+
   return (
     <div className="py-2">
       <Tabs defaultValue="pending" className="">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="pending">Pending ({pendingCount})</TabsTrigger>
+          <TabsTrigger value="pending">Pending<Badge className="ml-1 bg-gray-500">{pendingCount}</Badge></TabsTrigger>
           <TabsTrigger value="canceled">
-            Cancelled ({cancelledCount})
+            Cancelled<Badge className="ml-1 bg-gray-500">{cancelledCount}</Badge>
           </TabsTrigger>
-          <TabsTrigger value="recieved">Received ({receivedCount})</TabsTrigger>
+          <TabsTrigger value="recieved">Received<Badge className="ml-1 bg-gray-500">{receivedCount}</Badge></TabsTrigger>
         </TabsList>
 
         {/* Pending Tab */}
         <TabsContent value="pending">
-          <div className="w-full h-[86vh] md:h-[70vh] lg:h-[60vh] overflow-auto py-2">
+          <div className="w-full  h-[60vh] overflow-auto py-2">
             {loading ? (
               <SkeletonList />
             ) : sentRequests.length === 0 ? (
@@ -158,7 +161,7 @@ const FriendRequests = () => {
 
         {/* Cancelled Tab */}
         <TabsContent value="canceled">
-          <div className="w-full h-[86vh] md:h-[70vh] lg:h-[60vh] overflow-auto py-2">
+          <div className="w-full h-[60vh]  overflow-auto py-2">
             {loading ? (
               <SkeletonList />
             ) : cancelledSentRequests.length === 0 ? (
@@ -219,7 +222,7 @@ const FriendRequests = () => {
 
         {/* Received Tab */}
         <TabsContent value="recieved">
-          <div className="w-full h-[86vh] md:h-[70vh] lg:h-[60vh] overflow-auto py-2">
+          <div className="w-full h-[60vh] overflow-auto py-2">
             {loading ? (
               <SkeletonList />
             ) : receivedRequests.length === 0 ? (

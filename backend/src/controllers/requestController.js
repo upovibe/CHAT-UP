@@ -157,18 +157,21 @@ export const getPendingFriendRequests = async (req, res) => {
   const userId = req.user.id; // Authenticated user's ID
 
   try {
-    // Fetch pending friend requests where the user is either the sender or receiver
+    // For the sender, fetch the list of pending friend requests with populated sender and receiver details
     const pendingRequests = await FriendRequest.find({
-      $or: [{ senderId: userId }, { receiverId: userId }],
+      senderId: userId,
       status: "pending",
     })
       .populate("senderId", "fullName userName avatar") // Populate sender's details
       .populate("receiverId", "fullName userName avatar") // Populate receiver's details
       .sort({ createdAt: -1 }); // Sort by the latest request
 
+    const pendingRequestsCount = pendingRequests.length;
+
     res.status(200).json({
       message: "Pending friend requests fetched successfully.",
-      pendingRequests,
+      pendingRequests, // List of requests sent by the user
+      pendingRequestsCount, // Count of requests sent by the user
     });
   } catch (error) {
     console.error(error);
