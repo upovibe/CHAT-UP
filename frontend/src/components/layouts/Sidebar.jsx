@@ -24,8 +24,10 @@ import {
 import Settings from "@/pages/settings/Settings";
 import { Button } from "../ui/button";
 import { useFriendRequests } from "@/stores/useFriendRequests";
+import { useBlockFriend } from "@/stores/useBlockFriend";
 import FriendRequests from "@/components/layouts/FriendRequests";
 import MyFriendList from "@/components/layouts/MyFriendsList";
+import BlockedUserList from "@/components/layouts/BlockedUserList";
 
 const Sidebar = ({
   isHidden,
@@ -39,6 +41,7 @@ const Sidebar = ({
   const [activeContent, setActiveContent] = useState(null);
   const { pendingCount, cancelledCount, receivedCount, totalFriends } =
     useFriendRequests();
+  const { blockedFriendsCount } = useBlockFriend();
 
   const totalRequests = pendingCount + cancelledCount + receivedCount;
 
@@ -84,7 +87,7 @@ const Sidebar = ({
     {
       icon: <Ban className="text-gray-400" />,
       label: "Blocked",
-      notificationCount: 1,
+      content: <BlockedUserList onProfileClick={onProfileClick} />,
     },
   ];
 
@@ -146,7 +149,7 @@ const Sidebar = ({
                     </h3>
                   )}
                 </div>
-                {!isCollapsed && (
+                {!isCollapsed && item.notificationCount !== undefined && (
                   <Badge className="text-white bg-blue-500 font-extrabold py-[0.5px] flex items-center ml-auto">
                     {item.notificationCount}
                   </Badge>

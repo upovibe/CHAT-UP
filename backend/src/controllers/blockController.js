@@ -68,7 +68,7 @@ export const getBlockedUsers = async (req, res) => {
       .select("blocked");
 
     if (!blockedUsers.length) {
-      return res.status(404).json({ message: "No blocked users found" });
+      return res.status(200).json({ blockedUsers: [], blockedUsersCount: 0 });
     }
 
     // Extract user data

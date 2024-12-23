@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
+import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { useFriendRequests } from "@/stores/useFriendRequests";
-import { useBlockFriend } from "@/stores/useBlockFriend";
+import { useBlockFriend } from "@/stores/useBlockFriend"; // Import useBlockFriend
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Command,
@@ -23,26 +24,19 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { Button } from "../ui/button";
+import SkeletonList from "@/components/layouts/SkeletonList";
 
 const MyFriendsList = ({ onContactSelect, onProfileClick }) => {
-//   const [selectedContactId, setSelectedContactId] = useState(null);
-  const [ setSelectedContactId] = useState(null);
-  const { friendsList, getFriendsList, error, totalFriends } =
+  const { toast } = useToast();
+  const { blockUser, getBlockedFriends } = useBlockFriend();
+  const { friendsList, getFriendsList, error, totalFriends, loading } =
     useFriendRequests();
-  const {
-    blockedFriends,
-    blockUser,
-    unblockUser,
-    getBlockedFriends,
-    loading: blockLoading,
-  } = useBlockFriend();
   const [friends, setFriends] = useState([]);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
     getFriendsList();
-    getBlockedFriends();
-  }, [getFriendsList, getBlockedFriends]);
+  }, [getFriendsList]);
 
   useEffect(() => {
     if (friendsList) {
@@ -54,14 +48,23 @@ const MyFriendsList = ({ onContactSelect, onProfileClick }) => {
     return <div>Error: {error}</div>;
   }
 
-  const isBlocked = (friendId) =>
-    blockedFriends.some((blocked) => blocked._id === friendId);
-
-  const handleBlockToggle = async (friend) => {
-    if (isBlocked(friend._id)) {
-      await unblockUser(friend._id);
-    } else {
-      await blockUser(friend._id);
+  const handleBlockUser = async (friendId) => {
+    try {
+      await blockUser(friendId);
+      toast({
+        title: "Success",
+        description: "User blocked successfully",
+        status: "success",
+      });
+      getFriendsList();
+      getBlockedFriends();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Error blocking user",
+        status: "error",
+      });
+      console.error("Error blocking user:", error);
     }
   };
 
@@ -75,11 +78,6 @@ const MyFriendsList = ({ onContactSelect, onProfileClick }) => {
       label: "Contact Info",
       icon: <Info size={16} />,
       onClick: () => onProfileClick(friend),
-    },
-    {
-      label: "Mark as read",
-      icon: <MailCheck size={16} />,
-      className: "lg:hidden",
     },
     {
       label: "Mute Notification",
@@ -97,10 +95,9 @@ const MyFriendsList = ({ onContactSelect, onProfileClick }) => {
       onClick: () => console.log("Report clicked"),
     },
     {
-      label: isBlocked(friend._id) ? "Unblock" : "Block",
+      label: "Block",
       icon: <ShieldOff size={16} />,
-      onClick: () => handleBlockToggle(friend),
-      disabled: blockLoading,
+      onClick: () => handleBlockUser(friend.id),
     },
   ];
 
@@ -117,31 +114,36 @@ const MyFriendsList = ({ onContactSelect, onProfileClick }) => {
   );
 
   const handleContactSelect = (friend) => {
-    setSelectedContactId(friend.id);
-    if (onContactSelect) onContactSelect(friend);
+    onContactSelect(friend.id);
   };
 
   return (
-    <div className="">
-      <Command>
-        <Input
-          className="border-t-0 border-r-0 border-l-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
-          type="text"
-          placeholder="Search new friends..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <CommandList>
-          <CommandGroup heading={`Total Friends ${totalFriends}`}>
-            {filteredFriends.map((friend) => (
+    <Command>
+      <Input
+        className="border-t-0 border-r-0 border-l-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
+        type="text"
+        placeholder="Search new friends..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <CommandList>
+        <CommandGroup heading={`Total Friends: ${totalFriends}`}>
+          {loading ? (
+            [...Array(1)].map((_, index) => (
+              <li
+                key={index}
+                className="p-4 flex items-center gap-2 cursor-pointer border-b border-b-gray-200 dark:border-b-gray-800"
+              >
+                <SkeletonList />
+              </li>
+            ))
+          ) : filteredFriends.length > 0 ? (
+            filteredFriends.map((friend) => (
               <CommandItem
                 key={friend._id}
                 className="flex items-center gap-3 w-full"
               >
-                <Avatar
-                  onClick={() => onProfileClick(friend)}
-                  className="cursor-pointer"
-                >
+                <Avatar onClick={() => onProfileClick(friend)} className="cur">
                   <AvatarImage src={friend.avatar} />
                   <AvatarFallback>
                     {friend.fullName
@@ -155,9 +157,7 @@ const MyFriendsList = ({ onContactSelect, onProfileClick }) => {
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {friend.fullName}
                   </div>
-                  <div className="text-sm text-gray-500">
-                    @{friend.userName}
-                  </div>
+                  <div className="text-sm text-gray-500">@{friend.userName}</div>
                 </div>
                 <DropdownMenuWrapper
                   key={friend._id}
@@ -167,14 +167,15 @@ const MyFriendsList = ({ onContactSelect, onProfileClick }) => {
                 />
                 <CommandSeparator />
               </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandEmpty>
-            No users found matching &quot;{query.trim()}&quot;
-          </CommandEmpty>
-        </CommandList>
-      </Command>
-    </div>
+            ))
+          ) : (
+            <CommandEmpty>
+              No users found matching &quot;{query.trim()}&quot;
+            </CommandEmpty>
+          )}
+        </CommandGroup>
+      </CommandList>
+    </Command>
   );
 };
 

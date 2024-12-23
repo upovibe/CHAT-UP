@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Notification from "../models/notification.js"; 
+import Notification from "../models/notification.js";
 import FriendRequest from "../models/requestModel.js";
 import BlockedUser from "../models/blockedUserModel.js";
 import User from "../models/userModel.js";
@@ -166,12 +166,19 @@ export const getPendingFriendRequests = async (req, res) => {
       .populate("receiverId", "fullName userName avatar") // Populate receiver's details
       .sort({ createdAt: -1 }); // Sort by the latest request
 
-    const pendingRequestsCount = pendingRequests.length;
+    // Filter out blocked users
+    const blockedUserIds = await BlockedUser.find({ blocker: userId })
+      .select("blocked")
+      .lean()
+      .then((blocks) => blocks.map((block) => block.blocked));
+
+    const filteredRequests = pendingRequests.filter(
+      (request) => !blockedUserIds.includes(request.receiverId.toString())
+    );
 
     res.status(200).json({
       message: "Pending friend requests fetched successfully.",
-      pendingRequests, // List of requests sent by the user
-      pendingRequestsCount, // Count of requests sent by the user
+      pendingRequests: filteredRequests,
     });
   } catch (error) {
     console.error(error);
@@ -179,7 +186,7 @@ export const getPendingFriendRequests = async (req, res) => {
   }
 };
 
-// Get Received Friend Requests (requests sent to the logged-in user)
+// Get Received Friend Requests
 export const getReceivedFriendRequests = async (req, res) => {
   const userId = req.user.id; // Authenticated user's ID
 
@@ -189,12 +196,22 @@ export const getReceivedFriendRequests = async (req, res) => {
       receiverId: userId,
       status: "pending",
     })
-      .populate("senderId", "fullName userName avatar") // Populate sender's details
-      .sort({ createdAt: -1 }); // Sort by the latest request
+      .populate("senderId", "fullName userName avatar")
+      .sort({ createdAt: -1 });
+
+    // Filter out blocked users
+    const blockedUserIds = await BlockedUser.find({ blocker: userId })
+      .select("blocked")
+      .lean()
+      .then((blocks) => blocks.map((block) => block.blocked));
+
+    const filteredRequests = receivedRequests.filter(
+      (request) => !blockedUserIds.includes(request.senderId.toString())
+    );
 
     res.status(200).json({
       message: "Received friend requests fetched successfully.",
-      receivedRequests,
+      receivedRequests: filteredRequests,
     });
   } catch (error) {
     console.error(error);
@@ -309,12 +326,19 @@ export const getFriendsList = async (req, res) => {
   const userId = req.user.id; // Authenticated user's ID
 
   try {
+    // Fetch blocked user IDs
+    const blockedUserIds = await BlockedUser.find({ blocker: userId })
+      .select("blocked")
+      .lean()
+      .then((blocks) => blocks.map((block) => block.blocked));
+
     // Fetch friends where the user is either the sender or receiver and status is "accepted"
     const friends = await FriendRequest.find({
       $or: [{ senderId: userId }, { receiverId: userId }],
       status: "accepted",
+      $nor: [{ senderId: { $in: blockedUserIds } }, { receiverId: { $in: blockedUserIds } }],
     })
-      .populate("senderId", "fullName userName phoneNumber avatar email createdAt status isOnline lastSeenr") 
+      .populate("senderId", "fullName userName phoneNumber avatar email createdAt status isOnline lastSeenr")
       .populate("receiverId", "fullName userName phoneNumber avatar email createdAt status isOnline lastSeen")
       .sort({ updatedAt: -1 });
 
