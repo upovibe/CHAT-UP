@@ -55,7 +55,9 @@ const Home = () => {
       <Sidebar
         isHidden={isSidebarHidden}
         toggleSidebar={toggleSidebar}
-        onProfileClick={handleProfileToggle}
+        onProfileToggle={handleProfileToggle}
+        onProfileClick={handleProfileInfoClick}
+        onContactSelect={handleContactListChat}
       />
 
       {/* Main Content */}

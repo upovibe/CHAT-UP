@@ -60,7 +60,7 @@ export const unblockUser = async (req, res) => {
 
 // Get list of blocked users
 export const getBlockedUsers = async (req, res) => {
-  const blockerId = req.user.id; // Get the authenticated user's ID
+  const blockerId = req.user.id;
 
   try {
     const blockedUsers = await BlockedUser.find({ blocker: blockerId })
@@ -74,7 +74,10 @@ export const getBlockedUsers = async (req, res) => {
     // Extract user data
     const blockedUserList = blockedUsers.map((block) => block.blocked);
 
-    res.status(200).json({ blockedUsers: blockedUserList });
+    res.status(200).json({
+      blockedUsers: blockedUserList,
+      blockedUsersCount: blockedUserList.length,
+    });
   } catch (error) {
     console.error("Error fetching blocked users:", error.message);
     res

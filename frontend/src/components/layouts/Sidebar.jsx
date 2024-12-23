@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-// import { Link } from "react-router-dom";
 import {
   Ban,
   Edit,
@@ -26,17 +25,22 @@ import Settings from "@/pages/settings/Settings";
 import { Button } from "../ui/button";
 import { useFriendRequests } from "@/stores/useFriendRequests";
 import FriendRequests from "@/components/layouts/FriendRequests";
-import MyFriendList from "@/components/layouts/MyFriendsList"
+import MyFriendList from "@/components/layouts/MyFriendsList";
 
-const Sidebar = ({ isHidden, onProfileClick }) => {
+const Sidebar = ({
+  isHidden,
+  onProfileToggle,
+  onContactSelect,
+  onProfileClick,
+}) => {
   const { authUser } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [activeContent, setActiveContent] = useState(null);
-  const { pendingCount, cancelledCount, receivedCount, totalFriends } = useFriendRequests();  
+  const { pendingCount, cancelledCount, receivedCount, totalFriends } =
+    useFriendRequests();
 
   const totalRequests = pendingCount + cancelledCount + receivedCount;
-
 
   const toggleCollapse = () => setIsCollapsed((prev) => !prev);
 
@@ -65,12 +69,17 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
       label: "Requests",
       notificationCount: totalRequests,
       content: <FriendRequests />,
-    },    
+    },
     {
       icon: <Users className="text-gray-400" />,
       label: "My friends",
       notificationCount: totalFriends,
-      content: <MyFriendList />,
+      content: (
+        <MyFriendList
+          onProfileClick={onProfileClick}
+          onContactSelect={onContactSelect}
+        />
+      ),
     },
     {
       icon: <Ban className="text-gray-400" />,
@@ -130,9 +139,9 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
                 onClick={() => setActiveContent(item.content)}
               >
                 <div className="relative flex items-center gap-3">
-                {item.icon}
+                  {item.icon}
                   {!isCollapsed && (
-                      <h3 className="font-bold whitespace-nowrap">
+                    <h3 className="font-bold whitespace-nowrap">
                       {item.label}
                     </h3>
                   )}
@@ -159,7 +168,7 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
 
       <div>
         <div
-          onClick={onProfileClick}
+          onClick={onProfileToggle}
           className={`p-2 flex items-center gap-3 cursor-pointer hover:text-blue-500 dark:hover:text-blue-950 border-l-4 border-transparent hover:border-blue-600 hover:bg-blue-100/50 transition-all ${
             isCollapsed ? "mx-auto justify-center" : "mr-2 lg:rounded-r-full"
           }`}
@@ -204,7 +213,9 @@ const Sidebar = ({ isHidden, onProfileClick }) => {
 Sidebar.propTypes = {
   isHidden: PropTypes.bool,
   toggleSidebar: PropTypes.func,
-  onProfileClick: PropTypes.func.isRequired,
+  onContactSelect: PropTypes.func,
+  onProfileClick: PropTypes.func,
+  onProfileToggle: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

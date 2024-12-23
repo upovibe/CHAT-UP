@@ -23,18 +23,15 @@ import Lottie from "lottie-react";
 import InviteLoading from "@/assets/animations/InviteAnimation.json";
 
 const FriendList = ({
-  onContactSelect,
   onToggleSidebar,
   isSidebarHidden,
+  onContactSelect,
   onProfileClick,
 }) => {
   const [selectedContactId, setSelectedContactId] = useState(null);
-
-  // Access the friendsList state from the store
-  const { friendsList, loading, error, getFriendsList } = useFriendRequests();
+  const { friendsList, loading, getFriendsList } = useFriendRequests();
 
   useEffect(() => {
-    // Fetch the friends list when the component mounts
     getFriendsList();
   }, [getFriendsList]);
 
@@ -86,7 +83,7 @@ const FriendList = ({
 
   // Function to handle sharing the invite link
   const shareInviteLink = () => {
-    const inviteLink = "https://yourapp.com/invite"; // Replace with your actual invite link
+    const inviteLink = "https://yourapp.com/invite";
     if (navigator.share) {
       // If the Web Share API is supported, use it
       navigator
