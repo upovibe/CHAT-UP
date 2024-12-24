@@ -1,9 +1,21 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 import ChatBoxContent from "@/components/layouts/ChatBoxContent";
 import ChatBoxHeader from "@/components/layouts/ChatBoxHeader";
 import ChatBoxFooter from "@/components/layouts/ChatBoxFooter";
 
 const ChatBox = ({ selectedContact, isVisible, onClose, onProfileClick }) => {
+  const [messages, setMessages] = useState([]);
+
+  const handleSendMessage = (message) => {
+    if (message.trim()) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: message, sender: "me", timestamp: new Date() },
+      ]);
+    }
+  };
+
   return (
     <>
       {/* Overlay for Small Screens */}
@@ -14,14 +26,13 @@ const ChatBox = ({ selectedContact, isVisible, onClose, onProfileClick }) => {
       >
         {selectedContact ? (
           <>
-            {/* Header */}
-            <ChatBoxHeader onClose={onClose} />
-
-            {/* Scrollable Content */}
-            <ChatBoxContent />
-
-            {/* Footer */}
-            <ChatBoxFooter />
+            <ChatBoxHeader
+              onClose={onClose}
+              selectedContact={selectedContact}
+              onProfileClick={onProfileClick}
+            />
+            <ChatBoxContent messages={messages} />
+            <ChatBoxFooter onSendMessage={handleSendMessage} />
           </>
         ) : (
           <div className="flex-grow flex items-center justify-center">
@@ -33,14 +44,13 @@ const ChatBox = ({ selectedContact, isVisible, onClose, onProfileClick }) => {
       {/* Default Layout for Medium and Larger Screens */}
       {selectedContact ? (
         <div className="hidden md:flex flex-col relative w-full">
-          {/* Header */}
-          <ChatBoxHeader onClose={onClose} onProfileClick={onProfileClick} />
-
-          {/* Scrollable Content */}
-          <ChatBoxContent />
-
-          {/* Footer */}
-          <ChatBoxFooter />
+          <ChatBoxHeader
+            onClose={onClose}
+            selectedContact={selectedContact}
+            onProfileClick={onProfileClick}
+          />
+          <ChatBoxContent messages={messages} />
+          <ChatBoxFooter onSendMessage={handleSendMessage} />
         </div>
       ) : (
         <div className="flex-grow hidden md:flex items-center justify-center w-full">

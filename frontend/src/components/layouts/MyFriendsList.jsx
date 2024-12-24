@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { useFriendRequests } from "@/stores/useFriendRequests";
-import { useBlockFriend } from "@/stores/useBlockFriend"; // Import useBlockFriend
+import { useBlockFriend } from "@/stores/useBlockFriend";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Command,
@@ -102,7 +102,7 @@ const MyFriendsList = ({ onContactSelect, onProfileClick }) => {
   ];
 
   const triggerElement = () => (
-    <Button variant="ghost" className="ml-auto">
+    <Button variant="outline" size="icon" className="ml-auto">
       <EllipsisVertical className="" />
     </Button>
   );

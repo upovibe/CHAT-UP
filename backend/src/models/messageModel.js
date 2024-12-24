@@ -12,7 +12,7 @@ const messageSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    conversation: {
+    chat: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Conversation",
       required: true,
@@ -29,7 +29,7 @@ const messageSchema = new mongoose.Schema(
         },
         type: {
           type: String,
-          enum: ["image", "video", "file"],
+          enum: ["image"],
           required: true,
         },
       },
@@ -51,7 +51,7 @@ const messageSchema = new mongoose.Schema(
     ],
   },
   {
-    timestamps: true, // Automatically adds `createdAt` and `updatedAt`
+    timestamps: true,
   }
 );
 

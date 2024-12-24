@@ -69,7 +69,7 @@ const BlockedUserList = ({ onProfileClick }) => {
   ];
 
   const triggerElement = () => (
-    <Button variant="ghost" className="ml-auto">
+    <Button variant="outline" size="icon" className="ml-auto">
       <EllipsisVertical className="" />
     </Button>
   );

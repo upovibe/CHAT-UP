@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import PropTypes from "prop-types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,7 @@ import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
 import { Button } from "@/components/ui/button";
 import SkeletonList from "@/components/layouts/SkeletonList";
 import { useFriendRequests } from "@/stores/useFriendRequests";
+import { useBlockFriend } from "@/stores/useBlockFriend";
 import Lottie from "lottie-react";
 import InviteLoading from "@/assets/animations/InviteAnimation.json";
 
@@ -28,12 +30,34 @@ const FriendList = ({
   onContactSelect,
   onProfileClick,
 }) => {
+  const { toast } = useToast();
   const [selectedContactId, setSelectedContactId] = useState(null);
   const { friendsList, loading, getFriendsList } = useFriendRequests();
+  const { blockUser, getBlockedFriends } = useBlockFriend();
 
   useEffect(() => {
     getFriendsList();
   }, [getFriendsList]);
+
+  const handleBlockUser = async (contactId) => {
+    try {
+      await blockUser(contactId);
+      toast({
+        title: "Success",
+        description: "User blocked successfully",
+        status: "success",
+      });
+      getFriendsList();
+      getBlockedFriends();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Error blocking user",
+        status: "error",
+      });
+      console.error("Error blocking user:", error);
+    }
+  };
 
   const triggerElement = (contact) => (
     <Avatar>
@@ -71,7 +95,7 @@ const FriendList = ({
     {
       label: "Block",
       icon: <ShieldOff size={16} />,
-      onClick: () => console.log("Block clicked"),
+      onClick: () => handleBlockUser(contact.id),
     },
   ];
 
