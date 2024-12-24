@@ -4,17 +4,26 @@ import User from "../models/userModel.js";
 import Message from "../models/messageModel.js";
 import Chat from "../models/chatModel.js";
 import cloudinary from "../config/cloudinary.js";
+import {
+  updateChatLastMessage,
+  sendNotification,
+  uploadAttachmentToCloudinary,
+  validateFile,
+} from "../utils/chatUtils.js";
+// import { encryptMessage, decryptMessage } from "../config/encryption.js"; // Commented out encryption imports
 
-// Send a message
+
+// Controller function to send a message
 export const sendMessage = async (req, res) => {
   const { sender, recipient, text, attachments } = req.body;
 
-  if (!sender || !recipient || !text) {
+  // Ensure required data is provided
+  if (!sender || !recipient || (!text && (!attachments || !attachments.length))) {
     return res.status(400).json({ message: "Incomplete data" });
   }
 
   try {
-    // Validate sender and recipient
+    // Check if both sender and recipient exist in the database
     const [senderExists, recipientExists] = await Promise.all([
       User.findById(sender),
       User.findById(recipient),
@@ -24,16 +33,36 @@ export const sendMessage = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check blocking
+    // Check if either user has blocked the other
     const isBlocked = await BlockedUser.exists({
-      $or: [{ blocker: sender, blocked: recipient }, { blocker: recipient, blocked: sender }],
+      $or: [
+        { blocker: sender, blocked: recipient },
+        { blocker: recipient, blocked: sender },
+      ],
     });
 
     if (isBlocked) {
       return res.status(403).json({ message: "Blocked" });
     }
 
-    // Fetch or create chat
+    // Encrypt the message text if provided (commented out for now)
+    // const encryptedText = text ? encryptMessage(text) : null;
+    const encryptedText = text; // Use the plain text temporarily
+
+    // Upload attachments to Cloudinary if provided
+    const uploadedAttachmentUrls = [];
+    if (attachments?.length) {
+      for (const attachment of attachments) {
+        // Validate the file type
+        validateFile(attachment.file);
+
+        // Upload the file to Cloudinary and store the URL
+        const uploadedAttachment = await uploadAttachmentToCloudinary(attachment);
+        uploadedAttachmentUrls.push(uploadedAttachment);
+      }
+    }
+
+    // Check if a chat exists between sender and recipient; create one if not
     let chat = await Chat.findOne({
       participants: { $all: [sender, recipient] },
       isGroupChat: false,
@@ -46,132 +75,193 @@ export const sendMessage = async (req, res) => {
       });
     }
 
-    // Process attachments if present
-    const processedAttachments = [];
-    if (attachments?.length) {
-      for (const attachment of attachments) {
-        const { file, type } = attachment;
-
-        // Check file size (max 5MB)
-        const fileBuffer = Buffer.from(file.split(",")[1], "base64");
-        if (fileBuffer.length > 5 * 1024 * 1024) {
-          return res.status(400).json({ message: "Attachment too large" });
-        }
-
-        // Upload to Cloudinary
-        try {
-          const uploadResult = await cloudinary.uploader.upload(file, {
-            folder: "attachments/images",
-            resource_type: "image",
-          });
-          processedAttachments.push({ url: uploadResult.secure_url, type });
-        } catch (uploadError) {
-          console.error("Error uploading to Cloudinary:", uploadError.message);
-          return res.status(500).json({ message: "Error uploading attachment" });
-        }
-      }
-    }
-
-    // Create message
+    // Save the message in the database
     const message = await Message.create({
       sender,
       recipient,
-      text,
-      attachments: processedAttachments,
+      text: encryptedText, // Store the plain text temporarily
+      attachments: uploadedAttachmentUrls,
       chat: chat._id,
+      status: "sent",
     });
 
-    // Update chat's last message
-    chat.lastMessage = text;
-    chat.lastMessageAt = Date.now();
-    chat.title = text; 
-    await chat.save();
+    // Update the chat with the latest message
+    await updateChatLastMessage(chat, message);
 
-    // Send notification (optional)
-    await Notification.create({
-      userId: recipient,
-      type: "message",
-      message: `New message from ${senderExists.fullName}`,
-      avatar: senderExists.avatar, 
-      fullName: senderExists.fullName,
-    });
+    // Send a notification to the recipient
+    await sendNotification(recipient, senderExists);
 
+    // Respond with the created message
     res.status(201).json({ message: "Message sent", data: message });
-  } catch (err) {
-    console.error("Error sending message:", err.message);
+  } catch (error) {
+    console.error("Error sending message:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 
-// Get Friends List
-export const getFriendsList = async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    const friends = await FriendRequest.find({
-      $or: [
-        { sender: userId, status: "accepted" },
-        { recipient: userId, status: "accepted" },
-      ],
-    })
-      .populate("sender recipient", "-password")
-      .then((requests) =>
-        requests.map((req) =>
-          req.sender._id.toString() === userId ? req.recipient : req.sender
-        )
-      );
-
-    res.status(200).json({ friends });
-  } catch (err) {
-    console.error("Error fetching friends list:", err.message);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
-// Get messages in a conversation
 export const getMessages = async (req, res) => {
-  const { conversationId } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(conversationId)) {
-    return res.status(400).json({ message: "Invalid conversation ID" });
-  }
+  const { chatId } = req.params;
+  const { limit = 50, page = 1 } = req.query;
 
   try {
-    const messages = await Message.find({ conversation: conversationId })
+    const messages = await Message.find({ chat: chatId })
       .sort({ createdAt: -1 })
-      .populate("sender", "username avatar")
-      .populate("recipient", "username avatar");
+      .skip((page - 1) * limit)
+      .limit(Number(limit))
+      .populate("sender", "fullName avatar")
+      .populate("recipient", "fullName avatar");
 
-    res.status(200).json({ messages });
-  } catch (err) {
-    console.error("Error fetching messages:", err.message);
-    res.status(500).json({ message: "Error fetching messages" });
+    // Decrypt the messages if encryption is enabled (commented out for now)
+    const decryptedMessages = messages.map((message) => {
+      let decryptedText = null;
+      if (message.text) {
+        // Try decrypting the text (commented out for now)
+        // try {
+        //   decryptedText = decryptMessage(message.text); // Decrypt the message text
+        // } catch (err) {
+        //   console.error("Error decrypting message:", err.message);
+        // }
+        decryptedText = message.text; // Use plain text for now
+      }
+      return { ...message.toObject(), text: decryptedText };
+    });
+
+    res.status(200).json({ data: decryptedMessages });
+  } catch (error) {
+    console.error("Error fetching messages:", error.message);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 // Mark a message as read
-export const markAsRead = async (req, res) => {
+export const markMessageAsRead = async (req, res) => {
   const { messageId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(messageId)) {
-    return res.status(400).json({ message: "Invalid message ID" });
-  }
-
   try {
-    const message = await Message.findByIdAndUpdate(
-      messageId,
-      { status: "read" },
-      { new: true }
-    );
+    // Find the message by its ID
+    const message = await Message.findById(messageId);
 
     if (!message) {
       return res.status(404).json({ message: "Message not found" });
     }
 
+    // Check if the message is already read (optional)
+    if (message.status === "read") {
+      return res.status(400).json({ message: "Message already marked as read" });
+    }
+
+    // Mark the message as read
+    message.status = "read";
+
+    // Save the updated message
+    await message.save();
+
     res.status(200).json({ message: "Message marked as read", data: message });
-  } catch (err) {
-    console.error("Error marking message as read:", err.message);
-    res.status(500).json({ message: "Error updating message status" });
+  } catch (error) {
+    console.error("Error marking message as read:", error.message);
+    res.status(500).json({ message: "Server error" });
   }
+};
+
+// Controller function to update a message
+// export const updateMessage = async (req, res) => {
+//   const { messageId } = req.params;
+//   const { text, attachments } = req.body;  // Assuming only text and attachments will be updated
+
+//   try {
+//     // Find the message by its ID
+//     const message = await Message.findById(messageId);
+
+//     if (!message) {
+//       return res.status(404).json({ message: "Message not found" });
+//     }
+
+//     // Update the message fields (text and attachments are optional)
+//     if (text !== undefined) {
+//       message.text = text;
+//     }
+    
+//     if (attachments !== undefined) {
+//       message.attachments = attachments;
+//     }
+
+//     // Save the updated message
+//     await message.save();
+
+//     // Return the updated message data
+//     res.status(200).json({ message: "Message updated successfully", data: message });
+//   } catch (error) {
+//     console.error("Error updating message:", error.message);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+export const updateMessage = async (req, res) => {
+  const { messageId } = req.params;
+  const { text, attachments } = req.body;
+
+  try {
+    // Find the message by its ID
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    // If both text and attachments are provided, update only the text
+    if (text && attachments) {
+      message.text = text;
+    } 
+    // If only text is provided, update the text
+    else if (text) {
+      message.text = text;
+    }
+
+    // Save the updated message
+    await message.save();
+
+    // Return the updated message data
+    res.status(200).json({ message: "Message updated successfully", data: message });
+  } catch (error) {
+    console.error("Error updating message:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Delete a message
+export const deleteMessage = async (req, res) => {
+  const { messageId } = req.params;
+
+  try {
+    // Find the message by its ID
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    // Option 1: Physically delete the message
+    // await message.remove();
+
+    // Option 2: Mark the message as deleted (soft delete)
+    message.text = "This message was deleted.";
+    message.isDeleted = true;  // Mark the message as deleted (soft delete)
+    await message.save();
+
+    // Return a success response
+    res.status(200).json({ message: "Message deleted successfully", data: message });
+  } catch (error) {
+    console.error("Error deleting message:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Add a reaction to a message
+export const addReaction = async (req, res) => {
+  // Your implementation here
+};
+
+// Remove a reaction from a message
+export const removeReaction = async (req, res) => {
+  // Your implementation here
 };

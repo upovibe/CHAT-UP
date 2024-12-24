@@ -1,17 +1,20 @@
 import { axiosInstance } from "@/lib/axios";
 import { create } from "zustand";
 
-const useMessage = create((set) => ({
+export const useMessage = create((set, get) => ({
   isLoading: false,
   error: null,
   messageSent: null,
 
-  // Action to send a message
   sendMessage: async (sender, recipient, text, attachments) => {
+    if (!sender || !recipient || !text) {
+      set({ error: "Please fill in all fields" });
+      return;
+    }
+
     set({ isLoading: true, error: null, messageSent: null });
 
     try {
-      // Make an API request to send the message
       const response = await axiosInstance.post("/message/send", {
         sender,
         recipient,
@@ -19,14 +22,15 @@ const useMessage = create((set) => ({
         attachments,
       });
 
-      set({ isLoading: false, messageSent: response.data.data });
+      if (response.status === 201) {
+        set({ isLoading: false, messageSent: response.data.data });
+      } else {
+        throw new Error(response.data.message);
+      }
     } catch (error) {
-      set({ isLoading: false, error: error.response?.data?.message || error.message });
+      set({ isLoading: false, error: error.message });
     }
   },
 
-  // Optional: Action to reset the state (useful for clearing messages/errors after sending)
   reset: () => set({ isLoading: false, error: null, messageSent: null }),
 }));
-
-export default useMessage;
