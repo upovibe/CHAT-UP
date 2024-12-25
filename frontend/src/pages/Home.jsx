@@ -13,6 +13,8 @@ const Home = () => {
   const [selectedProfile, setSelectedProfile] = useState(null);
   const { authUser } = useAuth();
 
+  const userId = authUser._id;
+
   const handleContactListChat = (contact) => {
     setSelectedContact(contact);
     setIsChatVisible(true);
@@ -76,6 +78,7 @@ const Home = () => {
           isVisible={isChatVisible}
           onClose={handleChatClose}
           onProfileClick={handleProfileInfoClick}
+          userId={userId}
         />
 
         {/* Profile Info Overlay (for small/medium screens) */}

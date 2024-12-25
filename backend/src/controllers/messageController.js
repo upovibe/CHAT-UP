@@ -18,8 +18,17 @@ export const sendMessage = async (req, res) => {
   const { sender, recipient, text, attachments } = req.body;
 
   // Ensure required data is provided
-  if (!sender || !recipient || (!text && (!attachments || !attachments.length))) {
-    return res.status(400).json({ message: "Incomplete data" });
+  if (!sender || !recipient) {
+    return res.status(400).json({ message: "Sender and recipient are required" });
+  }
+
+  // Validate text and attachments fields
+  if (text && typeof text !== 'string') {
+    return res.status(400).json({ message: "Text must be a string" });
+  }
+
+  if (attachments && !Array.isArray(attachments)) {
+    return res.status(400).json({ message: "Attachments must be an array" });
   }
 
   try {
@@ -99,18 +108,22 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-
 export const getMessages = async (req, res) => {
-  const { chatId } = req.params;
-  const { limit = 50, page = 1 } = req.query;
-
   try {
+    const { chatId } = req.params;
+    const { limit = 50, page = 1 } = req.query;
+
+    console.log(`Fetching messages for chatId: ${chatId}`);
+    console.log(`Query parameters: limit=${limit}, page=${page}`);
+
     const messages = await Message.find({ chat: chatId })
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(Number(limit))
       .populate("sender", "fullName avatar")
       .populate("recipient", "fullName avatar");
+
+      console.log(`Fetched ${messages.length} messages`);
 
     // Decrypt the messages if encryption is enabled (commented out for now)
     const decryptedMessages = messages.map((message) => {

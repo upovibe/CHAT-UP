@@ -1,5 +1,7 @@
 import Chat from "../models/chatModel.js";
+import Message from "../models/messageModel.js"; 
 import User from "../models/userModel.js";
+import mongoose from "mongoose";
 
 // Create or Fetch Chat
 export const createOrFetchChat = async (req, res) => {
@@ -38,18 +40,46 @@ export const createOrFetchChat = async (req, res) => {
   }
 };
 
-// Get All Chats for a User
 export const getChats = async (req, res) => {
   const { userId } = req.params;
 
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: "Invalid userId" });
+  }
+
   try {
     const chats = await Chat.find({ participants: userId })
-      .populate("participants", "name email")
-      .sort({ updatedAt: -1 }); // Sort by latest activity
+      .populate("participants", "fullName avatar ")
+      .sort({ updatedAt: -1 });
 
     res.status(200).json(chats);
   } catch (err) {
-    console.error("Error fetching chats:", err.message);
+    console.error("Error fetching chats:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Mark all messages as read for a specific chat
+export const markMessagesAsReadForChat = async (req, res) => {
+  const { chatId } = req.params;
+
+  try {
+    // Find all unread messages in the chat
+    const unreadMessages = await Message.find({ chat: chatId, status: "sent" });
+
+    if (!unreadMessages.length) {
+      return res.status(404).json({ message: "No unread messages found in this chat" });
+    }
+
+    // Update the status of all unread messages to "read"
+    const updatedMessages = await Message.updateMany(
+      { _id: { $in: unreadMessages.map((msg) => msg._id) } },
+      { status: "read" }
+    );
+
+    res.status(200).json({ message: "Messages marked as read", data: updatedMessages });
+  } catch (error) {
+    console.error("Error marking messages as read:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 };

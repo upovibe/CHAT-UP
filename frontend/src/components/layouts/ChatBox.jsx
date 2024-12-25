@@ -1,21 +1,16 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
 import ChatBoxContent from "@/components/layouts/ChatBoxContent";
 import ChatBoxHeader from "@/components/layouts/ChatBoxHeader";
 import ChatBoxFooter from "@/components/layouts/ChatBoxFooter";
+import ChatPlaceholder from "@/components/layouts/ChatPlaceholder";
 
-const ChatBox = ({ selectedContact, isVisible, onClose, onProfileClick }) => {
-  const [messages, setMessages] = useState([]);
-
-  const handleSendMessage = (message) => {
-    if (message.trim()) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: message, sender: "me", timestamp: new Date() },
-      ]);
-    }
-  };
-
+const ChatBox = ({
+  selectedContact,
+  isVisible,
+  onClose,
+  onProfileClick,
+  userId,
+}) => {
   return (
     <>
       {/* Overlay for Small Screens */}
@@ -31,13 +26,12 @@ const ChatBox = ({ selectedContact, isVisible, onClose, onProfileClick }) => {
               selectedContact={selectedContact}
               onProfileClick={onProfileClick}
             />
-            <ChatBoxContent messages={messages} />
-            <ChatBoxFooter onSendMessage={handleSendMessage} />
+            {/* Pass userId to ChatBoxContent */}
+            <ChatBoxContent selectedContact={selectedContact} userId={userId} />
+            <ChatBoxFooter selectedContact={selectedContact} userId={userId} />
           </>
         ) : (
-          <div className="flex-grow flex items-center justify-center">
-            <p className="text-gray-500">Select a contact to start chatting</p>
-          </div>
+          <ChatPlaceholder />
         )}
       </div>
 
@@ -49,13 +43,12 @@ const ChatBox = ({ selectedContact, isVisible, onClose, onProfileClick }) => {
             selectedContact={selectedContact}
             onProfileClick={onProfileClick}
           />
-          <ChatBoxContent messages={messages} />
-          <ChatBoxFooter onSendMessage={handleSendMessage} />
+          {/* Pass userId to ChatBoxContent */}
+          <ChatBoxContent selectedContact={selectedContact} userId={userId} />
+          <ChatBoxFooter selectedContact={selectedContact} userId={userId} />
         </div>
       ) : (
-        <div className="flex-grow hidden md:flex items-center justify-center w-full">
-          <p className="text-gray-500">Select a contact to start chatting</p>
-        </div>
+        <ChatPlaceholder />
       )}
     </>
   );
@@ -66,6 +59,7 @@ ChatBox.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onProfileClick: PropTypes.func.isRequired,
+  userId: PropTypes.string,
 };
 
 export default ChatBox;

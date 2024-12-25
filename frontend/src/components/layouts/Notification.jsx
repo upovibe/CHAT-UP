@@ -151,7 +151,6 @@ const Notification = () => {
 
   useEffect(() => {
     if (authUser) {
-      console.log("Auth user:", authUser._id);
       // Fetch existing notifications
       fetchNotifications();
 
@@ -160,14 +159,12 @@ const Notification = () => {
 
       // Listen for notifications and show toast
       const handleNotification = (notification) => {
-        console.log("Received notification:", notification);
         toast({
           title: "New Notification",
           description: notification.message,
           status: "info",
         });
       };
-      console.log("Setting up WebSocket event listener for notifications");
       socket.on("notification", handleNotification);
 
       // Cleanup the WebSocket on component unmount

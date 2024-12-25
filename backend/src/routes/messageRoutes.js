@@ -12,54 +12,25 @@ import {
 
 const router = express.Router();
 
-/**
- * @route   POST /api/messages/send
- * @desc    Send a new message
- * @access  Protected
- */
+// Send a new message
 router.post("/send", protectRoute, sendMessage);
 
-/**
- * @route   GET /api/messages/chat/:chatId
- * @desc    Get all messages for a specific chat with pagination
- * @access  Protected
- */
+// Get messages for a specific chat
 router.get("/chat/:chatId", protectRoute, getMessages);
 
-/**
- * @route   PUT /api/messages/:messageId/read
- * @desc    Mark a specific message as read
- * @access  Protected
- */
+// Mark a message as read
 router.put("/:messageId/read", protectRoute, markMessageAsRead);
 
-/**
- * @route   PUT /api/messages/:messageId
- * @desc    Update (edit) a specific message
- * @access  Protected
- */
+// Update a specific message
 router.put("/:messageId", protectRoute, updateMessage);
 
-/**
- * @route   DELETE /api/messages/:messageId
- * @desc    Delete a specific message
- * @access  Protected
- */
+// Delete a specific message
 router.delete("/:messageId", protectRoute, deleteMessage);
 
-
-/**
- * @route   POST /api/messages/:messageId/react
- * @desc    Add a reaction to a specific message
- * @access  Protected
- */
+// Add a reaction to a message
 router.post("/:messageId/react", protectRoute, addReaction);
 
-/**
- * @route   DELETE /api/messages/:messageId/react
- * @desc    Remove a reaction from a specific message
- * @access  Protected
- */
+// Remove a reaction from a message
 router.delete("/:messageId/react", protectRoute, removeReaction);
 
 export default router;

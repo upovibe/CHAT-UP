@@ -5,15 +5,13 @@ import { FileText, Images, Link, SendHorizonal, Smile } from "lucide-react";
 import { InputTextarea } from "@/components/ui/InputTextarea";
 import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
 
-const ChatBoxFooter = ({ onSendMessage }) => {
+const ChatBoxFooter = ({ selectedContact, userId }) => {
   const [inputValue, setInputValue] = useState("");
 
-  const handleSend = () => {
-    if (inputValue.trim()) {
-      onSendMessage(inputValue);
-      setInputValue(""); // Clear the input
-    }
-  };
+  // const recipientId = selectedContact?.id;
+
+  console.log("User ID", userId);
+  console.log("Recipient ID", selectedContact?.id);
 
   const triggerElement = <Link className="rounded-full size-6 p-1" />;
 
@@ -35,7 +33,6 @@ const ChatBoxFooter = ({ onSendMessage }) => {
           placeholder="Type a message..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
         />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
@@ -57,7 +54,6 @@ const ChatBoxFooter = ({ onSendMessage }) => {
             type="submit"
             variant="outline"
             className="rounded-full h-9 flex"
-            onClick={handleSend}
           >
             <span className="hidden lg:block">Send</span>
             <SendHorizonal />
@@ -69,7 +65,8 @@ const ChatBoxFooter = ({ onSendMessage }) => {
 };
 
 ChatBoxFooter.propTypes = {
-  onSendMessage: PropTypes.func.isRequired,
+  selectedContact: PropTypes.object,
+  userId: PropTypes.string,
 };
 
 export default ChatBoxFooter;

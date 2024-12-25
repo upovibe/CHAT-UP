@@ -120,7 +120,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/friend-requests", requestRoutes);
 app.use("/api", blockRoutes);
 app.use("/api/chats", chatRoutes);
-app.use("/api/message", messageRoutes);
+app.use("/api/messages", messageRoutes);
 
 // Start the server
 httpServer.listen(PORT, () => {
