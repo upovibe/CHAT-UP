@@ -61,9 +61,8 @@ import { Server } from "socket.io";
 import authRoutes from "./routes/authRoute.js";
 import searchRoutes from "./routes/searchRoutes.js";
 import requestRoutes from "./routes/requestRoute.js";
-import messageRoutes from "./routes/messageRoutes.js";
 import blockRoutes from "./routes/blockRoutes.js";
-import chatRoutes from "./routes/chatRoutes.js";
+import chatMesageRoutes from "./routes/chatMessageRoutes.js";
 import notificationRoutes from './routes/notificationRoutes.js';
 
 // Initialize dotenv
@@ -119,8 +118,8 @@ app.use("/api", searchRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/friend-requests", requestRoutes);
 app.use("/api", blockRoutes);
-app.use("/api/chats", chatRoutes);
-app.use("/api/messages", messageRoutes);
+app.use("/api/chatmessages", chatMesageRoutes);
+
 
 // Start the server
 httpServer.listen(PORT, () => {
