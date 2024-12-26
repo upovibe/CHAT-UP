@@ -191,9 +191,8 @@ const ChatBoxFooter = ({ selectedContact, userId }) => {
       console.error("Message content is empty");
       return;
     }
-
     try {
-      const attachment = attachments[0]?.base64 || null; // Use base64 string
+      const attachment = attachments[0]?.base64 || null;
       await sendChatMessage({
         senderId: userId,
         receiverId: selectedContact?.id,
@@ -220,13 +219,12 @@ const ChatBoxFooter = ({ selectedContact, userId }) => {
     }
   };
 
-  const handleFileChange = async (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const fileUrl = URL.createObjectURL(file);
       setAttachments([{ file, preview: fileUrl }]);
 
-      // Convert file to base64
       const reader = new FileReader();
       reader.onload = () => {
         const base64String = reader.result.split(",")[1];
@@ -311,7 +309,7 @@ const ChatBoxFooter = ({ selectedContact, userId }) => {
         type="file"
         accept="image/*"
         ref={fileInputRef}
-        onChange={handleFileChange}
+        onChange={handleImageChange}
         style={{ display: "none" }}
       />
     </div>
