@@ -89,7 +89,7 @@ const ChatBoxHeader = ({ onClose, selectedContact, onProfileClick }) => {
   ];
 
   return (
-    <div className="px-4 py-[0.45rem] border-b-2 flex items-center justify-between">
+    <div className="px-4 py-3 md:py-[0.45rem] border-b-2 flex items-center justify-between">
       <div className="flex items-center gap-2">
         <Avatar
           className="cursor-pointer"

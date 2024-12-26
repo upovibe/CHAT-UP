@@ -12,17 +12,9 @@ const chatSchema = new mongoose.Schema({
   text: {
     type: String,
   },
-  attachments: [
-    {
-      url: {
-        type: String,
-      },
-      type: {
-        type: String,
-        enum: ["image"],
-      },
-    },
-  ],
+  image:{
+    type: String,
+  },
 }, { timestamps: true });
 
 const ChatMessage = mongoose.model("ChatMessage", chatSchema);

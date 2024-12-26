@@ -1,208 +1,72 @@
-// import { useState } from "react";
-// import PropTypes from "prop-types";
-// import { Button } from "@/components/ui/button";
-// import { FileText, Images, Link, SendHorizonal, Smile } from "lucide-react";
-// import { InputTextarea } from "@/components/ui/InputTextarea";
-// import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
-
-// const ChatBoxFooter = ({ selectedContact, userId }) => {
-//   const [inputValue, setInputValue] = useState("");
-
-//   // const recieverId = selectedContact?.id;
-
-//   console.log("User ID", userId);
-//   console.log("Recipient ID", selectedContact?.id);
-
-//   const triggerElement = <Link className="rounded-full size-6 p-1" />;
-
-//   const menuItems = [
-//     {
-//       label: "Photos & Videos",
-//       icon: <Images color="#007bfc" />,
-//     },
-//     {
-//       label: "Documents",
-//       icon: <FileText color={"#7f66ff"} />,
-//     },
-//   ];
-
-//   return (
-//     <div className="w-full p-4 border-t-2">
-//       <div className="rounded-xl border-gray-300 flex flex-col gap-2">
-//         <InputTextarea
-//           placeholder="Type a message..."
-//           value={inputValue}
-//           onChange={(e) => setInputValue(e.target.value)}
-//         />
-//         <div className="flex items-center justify-between">
-//           <div className="flex items-center gap-1">
-//             <Button
-//               className="size-8 border-none rounded-full"
-//               variant="outline"
-//             >
-//               <Smile />
-//             </Button>
-
-//             {/* DropdownMenuWrapper without nested buttons */}
-//             <DropdownMenuWrapper
-//               triggerElement={triggerElement}
-//               menuItems={menuItems}
-//               className="left-0"
-//             />
-//           </div>
-//           <Button
-//             type="submit"
-//             variant="outline"
-//             className="rounded-full h-9 flex"
-//           >
-//             <span className="hidden lg:block">Send</span>
-//             <SendHorizonal />
-//           </Button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// ChatBoxFooter.propTypes = {
-//   selectedContact: PropTypes.object,
-//   userId: PropTypes.string,
-// };
-
-// export default ChatBoxFooter;
-
-// import { useState } from "react";
-// import PropTypes from "prop-types";
-// import { Button } from "@/components/ui/button";
-// import { FileText, Images, Link, SendHorizonal, Smile } from "lucide-react";
-// import { InputTextarea } from "@/components/ui/InputTextarea";
-// import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
-// import { useChatMessages } from "@/stores/useChatMessages";
-
-// const ChatBoxFooter = ({ selectedContact, userId }) => {
-//   const [inputValue, setInputValue] = useState("");
-//   const [attachments, setAttachments] = useState([]); // Placeholder for attachments if needed
-//   const { sendChatMessage, isLoading } = useChatMessages();
-
-//   const handleSendChatMessage = async () => {
-//     if (!inputValue.trim()) {
-//       console.error("Message content is empty");
-//       return;
-//     }
-
-//     try {
-//       const attachment = attachments[0] || null; // Ensure correct structure
-//       await sendChatMessage({
-//         senderId: userId,
-//         receiverId: selectedContact?.id, // Use correct field
-//         text: inputValue.trim(),
-//         attachment,
-//       });
-//       setInputValue("");
-//     } catch (error) {
-//       console.error("Error sending message:", error.message);
-//     }
-//   };
-
-//   const handleKeyPress = (e) => {
-//     if (e.key === "Enter" && !e.shiftKey) {
-//       e.preventDefault();
-//       handleSendChatMessage();
-//     }
-//   };
-
-//   const triggerElement = <Link className="rounded-full size-6 p-1" />;
-
-//   const menuItems = [
-//     {
-//       label: "Photos & Videos",
-//       icon: <Images color="#007bfc" />,
-//     },
-//     {
-//       label: "Documents",
-//       icon: <FileText color={"#7f66ff"} />,
-//     },
-//   ];
-
-//   return (
-//     <div className="w-full p-4 border-t-2">
-//       <div className="rounded-xl border-gray-300 flex flex-col gap-2">
-//         <InputTextarea
-//           placeholder="Type a message..."
-//           value={inputValue}
-//           onChange={(e) => setInputValue(e.target.value)}
-//           onKeyPress={handleKeyPress}
-//           disabled={isLoading} // Disable input while sending
-//         />
-//         <div className="flex items-center justify-between">
-//           <div className="flex items-center gap-1">
-//             <Button
-//               className="size-8 border-none rounded-full"
-//               variant="outline"
-//             >
-//               <Smile />
-//             </Button>
-
-//             <DropdownMenuWrapper
-//               triggerElement={triggerElement}
-//               menuItems={menuItems}
-//               className="left-0 ml-14"
-//             />
-//           </div>
-//           <Button
-//             type="submit"
-//             variant="outline"
-//             className="rounded-full h-9 flex"
-//             onClick={handleSendChatMessage}
-//             disabled={isLoading}
-//           >
-//             <span className="hidden lg:block">Send</span>
-//             <SendHorizonal />
-//           </Button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// ChatBoxFooter.propTypes = {
-//   selectedContact: PropTypes.object,
-//   userId: PropTypes.string,
-// };
-
-// export default ChatBoxFooter;
-
 import { useState, useRef } from "react";
 import PropTypes from "prop-types";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { FileText, Images, Link, SendHorizonal, Smile } from "lucide-react";
+import { FileText, Images, Link, SendHorizonal, Smile, X } from "lucide-react";
 import { InputTextarea } from "@/components/ui/InputTextarea";
 import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
 import { useChatMessages } from "@/stores/useChatMessages";
 
-const ChatBoxFooter = ({ selectedContact, userId }) => {
+const ChatBoxFooter = ({ selectedContact }) => {
+  const { toast } = useToast();
   const [inputValue, setInputValue] = useState("");
-  const [attachments, setAttachments] = useState([]);
-  const fileInputRef = useRef(null);
+  const [imagePreview, setImagePreview] = useState([]);
   const { sendChatMessage, isLoading } = useChatMessages();
+  const fileInputRef = useRef();
+  const [isSending, setIsSending] = useState(false);
 
-  const handleSendChatMessage = async () => {
-    if (!inputValue.trim() && attachments.length === 0) {
-      console.error("Message content is empty");
+  const handleImageSelection = (event) => {
+    const file = event.target.files[0];
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Error",
+        description: "Only images are allowed.",
+        status: "error",
+      });
+      console.error("Invalid file type. Only images are allowed.");
       return;
     }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview([reader.result]);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSendChatMessage = async () => {
+    if (isSending) return;
+
+    setIsSending(true);
+
+    if (!inputValue.trim() && imagePreview.length === 0) {
+      console.error("Message content is empty, and no image is attached.");
+      setIsSending(false);
+      return;
+    }
+
+    if (!selectedContact?.id) {
+      console.error("Selected contact is invalid or missing.");
+      setIsSending(false);
+      return;
+    }
+
     try {
-      const attachment = attachments[0]?.base64 || null;
+      const image = imagePreview[0] || null;
       await sendChatMessage({
-        senderId: userId,
-        receiverId: selectedContact?.id,
-        text: inputValue.trim(),
-        attachment,
+        messageData: {
+          text: inputValue.trim(),
+          image,
+        },
+        userId: selectedContact.id,
       });
       setInputValue("");
-      setAttachments([]);
+      setImagePreview([]);
     } catch (error) {
       console.error("Error sending message:", error.message);
+      toast({ title: "Error", description: error.message, status: "error" });
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -213,34 +77,20 @@ const ChatBoxFooter = ({ selectedContact, userId }) => {
     }
   };
 
-  const triggerFilePicker = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const fileUrl = URL.createObjectURL(file);
-      setAttachments([{ file, preview: fileUrl }]);
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64String = reader.result.split(",")[1];
-        setAttachments([{ file, preview: fileUrl, base64: base64String }]);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const triggerElement = <Link className="rounded-full size-6 p-1" />;
+  const triggerElement = (
+    <Button
+      className="size-8 border-none rounded-full hover:bg-gray-500/30 transition-all duration-300 ease-linear"
+      variant="outline"
+    >
+      <Link />
+    </Button>
+  );
 
   const menuItems = [
     {
       label: "Photos & Videos",
       icon: <Images color="#007bfc" />,
-      onClick: triggerFilePicker,
+      onClick: () => fileInputRef.current.click(),
     },
     {
       label: "Documents",
@@ -249,24 +99,32 @@ const ChatBoxFooter = ({ selectedContact, userId }) => {
   ];
 
   return (
-    <div className="w-full p-4 border-t-2">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSendChatMessage();
+      }}
+      className="w-full p-4 border-t-2"
+    >
       <div className="rounded-xl border-gray-300 flex flex-col gap-2">
         <div className="flex flex-col gap-3 border rounded-lg p-2">
-          {attachments.length > 0 && (
-            <div className="flex items-center">
+          {/* Image Preview */}
+          {imagePreview.length > 0 && (
+            <div className="w-fit relative">
               <img
-                src={attachments[0].preview}
+                src={imagePreview[0]}
                 alt="Selected"
-                className="size-16 object-cover rounded-md mr-2"
+                className="rounded-lg max-h-40 object-contain"
               />
-              <button
-                className="text-red-500 text-sm"
-                onClick={() => setAttachments([])}
-              >
-                Remove
-              </button>
+              <X
+                size={20}
+                onClick={() => setImagePreview([])}
+                className="cursor-pointer absolute top-0 right-0 bg-red-600/30 hover:bg-red-600/70 hover:backdrop-blur-sm rounded-full p-1 transition duration-300"
+              />
             </div>
           )}
+
+          {/* Input Text Area */}
           <InputTextarea
             placeholder="Type a message..."
             value={inputValue}
@@ -275,11 +133,19 @@ const ChatBoxFooter = ({ selectedContact, userId }) => {
             disabled={isLoading}
             className="border-0 p-0 h-10"
           />
+          {/* File Input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            onChange={handleImageSelection}
+            className="hidden"
+          />
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <Button
-              className="size-8 border-none rounded-full"
+              className="size-8 border-none rounded-full hover:bg-gray-500/30 transition-all duration-300 ease-linear"
               variant="outline"
             >
               <Smile />
@@ -294,25 +160,15 @@ const ChatBoxFooter = ({ selectedContact, userId }) => {
           <Button
             type="submit"
             variant="outline"
-            className="rounded-full h-9 flex"
-            onClick={handleSendChatMessage}
-            disabled={isLoading}
+            className="rounded-full h-9 flex text-gray-500"
+            disabled={isLoading || isSending}
           >
-            <span className="hidden lg:block">Send</span>
-            <SendHorizonal />
+            <span className="hidden lg:block text-gray-500">Send</span>
+            <SendHorizonal className="text-gray-600" />
           </Button>
         </div>
       </div>
-
-      {/* Hidden file input */}
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        onChange={handleImageChange}
-        style={{ display: "none" }}
-      />
-    </div>
+    </form>
   );
 };
 

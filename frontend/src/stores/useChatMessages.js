@@ -17,27 +17,17 @@ export const useChatMessages = create((set) => ({
     }
   },
 
-  sendChatMessage: async (message) => {
+  sendChatMessage: async ({ messageData, userId }) => {
     try {
-      // Optimistic update
-      const tempMessage = { ...message, _id: `temp-${Date.now()}` }; // Assign temp ID
-      set((state) => ({ chatMessages: [...state.chatMessages, tempMessage] }));
-
-      const response = await axiosInstance.post("/chatmessages/send", message);
-      // Replace temp message with actual response
+      const response = await axiosInstance.post(`/chatmessages/send/${userId}`, messageData);
       set((state) => ({
-        chatMessages: state.chatMessages.map((msg) =>
-          msg._id === tempMessage._id ? response.data : msg
-        ),
+        chatMessages: [...state.chatMessages, response.data],
+        isLoading: false,
       }));
     } catch (error) {
-      // Rollback on failure
       console.error("Error sending chat message:", error.message);
-      set((state) => ({
-        chatMessages: state.chatMessages.filter(
-          (msg) => !msg._id.startsWith("temp-")
-        ),
-      }));
+      set({ isLoading: false });
     }
   },
+  
 }));

@@ -12,10 +12,10 @@ const router = express.Router();
 router.get("/:userId", protectRoute, getChatMessages);
 
 /**
- * @route   POST /api/chatmessages/send
+ * @route   POST /api/chatmessages/send/:userId
  * @desc    Send a new chat message
  * @access  Private
  */
-router.post("/send", protectRoute, sendChatMessage);
+router.post("/send/:userId", protectRoute, sendChatMessage);
 
 export default router;
