@@ -103,18 +103,15 @@
 // };
 
 // export default ChatBoxContent;
-
 import { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
-import { Check, CheckCheck, ChevronDown, Clock } from "lucide-react";
+import { Check, CheckCheck, ChevronDown, Clock, Loader } from "lucide-react";
 import { useChatMessages } from "@/stores/useChatMessages";
 import {
   isNewDay,
   formatDateSeparator,
   formatMessageTime,
 } from "@/utils/dataFormat";
-
-const ANIMATION_DURATION = 200;
 
 const ChatBoxContent = ({ selectedContact, userId }) => {
   const { chatMessages, isLoading, fetchChatMessages } = useChatMessages();
@@ -168,7 +165,7 @@ const ChatBoxContent = ({ selectedContact, userId }) => {
         const step = (timestamp) => {
           if (!startTime) startTime = timestamp;
 
-          const progress = (timestamp - startTime) / ANIMATION_DURATION;
+          const progress = (timestamp - startTime) / 200;
           const newScrollTop =
             scrollTop + (scrollHeight - clientHeight - scrollTop) * progress;
 
@@ -189,9 +186,6 @@ const ChatBoxContent = ({ selectedContact, userId }) => {
       requestAnimationFrame(animateScroll);
     }
   };
-
-  console.log("Sender ID", userId);
-  console.log("Receiver ID", selectedContact?.id);
 
   return (
     <div
@@ -216,9 +210,8 @@ const ChatBoxContent = ({ selectedContact, userId }) => {
       ) : (
         <div className="flex flex-col gap-5">
           {chatMessages.map((message, index) => {
-            // Check if a date separator is needed
             const showDateSeparator =
-              index === 0 || 
+              index === 0 ||
               isNewDay(
                 message.createdAt,
                 chatMessages[index - 1]?.createdAt || message.createdAt
@@ -262,8 +255,14 @@ const ChatBoxContent = ({ selectedContact, userId }) => {
                           : "text-gray-800"
                       } flex items-center gap-1`}
                     >
-                      {formatMessageTime(message.createdAt)}
-                      <Clock className="size-3" />
+                      {message.createdAt ? (
+                        <>
+                          {formatMessageTime(message.createdAt)}
+                          <Clock className="size-3" />
+                        </>
+                      ) : (
+                        <Loader className="animate-spin size-3" />
+                      )}
                     </span>
                     {message.senderId === userId && message.read ? (
                       <CheckCheck size={15} /> /* If read */
