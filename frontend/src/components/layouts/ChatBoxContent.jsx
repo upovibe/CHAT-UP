@@ -10,7 +10,13 @@ import {
 } from "@/utils/dataFormat";
 
 const ChatBoxContent = ({ selectedContact, userId }) => {
-  const { chatMessages, isLoading, fetchChatMessages } = useChatMessages();
+  const {
+    chatMessages,
+    isLoading,
+    fetchChatMessages,
+    subscribeToChatMessages,
+    unsubscribeFromChatMessages,
+  } = useChatMessages();
   const [isScrolledUp, setIsScrolledUp] = useState(false);
   const chatContainerRef = useRef(null);
   const scrollButtonRef = useRef(null);
@@ -24,6 +30,14 @@ const ChatBoxContent = ({ selectedContact, userId }) => {
     };
     fetchMessages();
   }, [selectedContact, fetchChatMessages, receiver]);
+
+  useEffect(() => {
+    subscribeToChatMessages(userId);
+  
+    return () => {
+      unsubscribeFromChatMessages();
+    };
+  }, [userId, subscribeToChatMessages, unsubscribeFromChatMessages]);
 
   // Scroll to the bottom when new messages are loaded
   useEffect(() => {
@@ -48,40 +62,38 @@ const ChatBoxContent = ({ selectedContact, userId }) => {
     }
   };
 
-  // Smooth scroll to the bottom
-  const scrollToBottom = () => {
-    if (chatContainerRef.current) {
-      const scrollHeight = chatContainerRef.current.scrollHeight;
-      const scrollTop = chatContainerRef.current.scrollTop;
-      const clientHeight = chatContainerRef.current.clientHeight;
+// Smooth scroll to the bottom
+const scrollToBottom = () => {
+  if (chatContainerRef.current) {
+    const scrollHeight = chatContainerRef.current.scrollHeight;
+    const scrollTop = chatContainerRef.current.scrollTop;
+    const distance = scrollHeight - scrollTop - chatContainerRef.current.clientHeight;
 
-      const animateScroll = () => {
-        let startTime = null;
+    const duration = 300; // Animation duration in milliseconds
+    let startTime;
 
-        const step = (timestamp) => {
-          if (!startTime) startTime = timestamp;
+    const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 
-          const progress = (timestamp - startTime) / 200;
-          const newScrollTop =
-            scrollTop + (scrollHeight - clientHeight - scrollTop) * progress;
+    const step = (timestamp) => {
+      if (!startTime) startTime = timestamp;
 
-          if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = newScrollTop;
-          }
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1); // Ensure progress doesn't exceed 1
+      const easedProgress = easeInOutQuad(progress);
 
-          if (progress < 1) {
-            requestAnimationFrame(step);
-          } else {
-            setIsScrolledUp(false);
-          }
-        };
+      chatContainerRef.current.scrollTop = scrollTop + distance * easedProgress;
 
+      if (progress < 1) {
         requestAnimationFrame(step);
-      };
+      } else {
+        setIsScrolledUp(false);
+      }
+    };
 
-      requestAnimationFrame(animateScroll);
-    }
-  };
+    requestAnimationFrame(step);
+  }
+};
+
 
   return (
     <div
@@ -92,7 +104,7 @@ const ChatBoxContent = ({ selectedContact, userId }) => {
       {/* Scroll to bottom button */}
       {isScrolledUp && (
         <button
-          className="fixed bottom-40 right-5 bg-[#020817]/50 text-white p-2 rounded-full shadow-lg"
+          className="fixed z-50 bottom-40 right-5 bg-[#020817]/50 text-white p-2 rounded-full shadow-lg"
           onClick={scrollToBottom}
           ref={scrollButtonRef}
         >

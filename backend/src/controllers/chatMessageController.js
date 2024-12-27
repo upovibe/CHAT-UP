@@ -1,6 +1,7 @@
 import ChatMessage from "../models/chatMessageModel.js";
 import BlockedUser from "../models/blockedUserModel.js";
 import cloudinary from "../config/cloudinary.js";
+import { getRecieverSocketId, io } from "../lib/socket.js";
 
 // Controller function to get all chat messages for a user
 
@@ -63,6 +64,12 @@ export const sendChatMessage = async (req, res) => {
     });
 
     await newChatMessage.save();
+
+    //Real time functionality with socket.io
+    const receiverSocketId = getRecieverSocketId(receiverId);
+    if(receiverSocketId){
+      io.to(receiverSocketId).emit('newChatMessage',newChatMessage);
+    }
 
     // Return the created message
     return res.status(201).json(newChatMessage);

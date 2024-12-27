@@ -1,9 +1,11 @@
 import { axiosInstance } from "@/lib/axios";
 import { create } from "zustand";
+import { initializeSocket } from "@/lib/socket";
 
-export const useChatMessages = create((set) => ({
+export const useChatMessages = create((set, get) => ({
   chatMessages: [],
   isLoading: false,
+  socket: null,
 
   // Action to fetch chat messages
   fetchChatMessages: async (userId) => {
@@ -19,7 +21,10 @@ export const useChatMessages = create((set) => ({
 
   sendChatMessage: async ({ messageData, userId }) => {
     try {
-      const response = await axiosInstance.post(`/chatmessages/send/${userId}`, messageData);
+      const response = await axiosInstance.post(
+        `/chatmessages/send/${userId}`,
+        messageData
+      );
       set((state) => ({
         chatMessages: [...state.chatMessages, response.data],
         isLoading: false,
@@ -29,5 +34,23 @@ export const useChatMessages = create((set) => ({
       set({ isLoading: false });
     }
   },
-  
+
+  subscribeToChatMessages: (userId) => {
+    const socket = initializeSocket(userId);
+    socket.on("newChatMessage", (newMessage) => {
+      set((state) => ({
+        chatMessages: [...state.chatMessages, newMessage],
+      }));
+    });
+    set({ socket });
+  },
+
+  unsubscribeFromChatMessages: () => {
+    const socket = get().socket;
+    if (socket) {
+      socket.off("newChatMessage");
+      socket.disconnect();
+      set({ socket: null });
+    }
+  },
 }));

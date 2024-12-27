@@ -1,8 +1,6 @@
 import { axiosInstance } from "@/lib/axios";
 import { create } from "zustand";
-import { io } from "socket.io-client";
-
-const BASE_URL = "http://localhost:5001"; // Replace with your actual base URL
+import { initializeSocket } from "@/lib/socket";
 
 export const useAuth = create((set, get) => ({
   authUser: null,
@@ -15,6 +13,7 @@ export const useAuth = create((set, get) => ({
   isLoggingIn: false,
   isUpdatingProfile: false,
   isCheckingAuth: true,
+  isOnline: false,
   onlineUsers: [],
   socket: null,
 
@@ -72,10 +71,10 @@ export const useAuth = create((set, get) => ({
       const res = await axiosInstance.post("/auth/signup", SignupData);
       if (res.data.user) {
         set({ authUser: res.data.user });
+        get().connectSocket();
       } else {
-        await useAuth.getState().checkAuth();
+        await get().checkAuth();
       }
-      get().connectSocket();
     } catch (e) {
       console.error("Signup failed:", e.message);
       throw e;
@@ -99,11 +98,9 @@ export const useAuth = create((set, get) => ({
             showStatus: true,
           },
         });
+        get().connectSocket();
         return res.data.user;
       }
-
-      get().connectSocket();
-
     } catch (e) {
       console.error("Login error:", e.response?.data || e.message);
       throw e;
@@ -117,10 +114,8 @@ export const useAuth = create((set, get) => ({
     try {
       set({ isLoggingIn: false });
       await axiosInstance.post("/auth/logout");
-      set({ authUser: null });
-
       get().disconnectSocket();
-
+      set({ authUser: null, onlineUsers: [], isOnline: false });
     } catch (e) {
       console.error("Logout failed:", e.message);
       throw e;
@@ -146,17 +141,32 @@ export const useAuth = create((set, get) => ({
   },
 
   connectSocket: () => {
-    const { authUser } = get()
+    const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
 
-    const socket = io(BASE_URL);
-    socket.connect();
+    const socket = initializeSocket(authUser._id);
 
-    set({ socket: socket });
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      set({ isOnline: true });
+    });
+
+    socket.on("getOnlineUsers", (onlineUsers) => {
+      set({ onlineUsers });
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected");
+      set({ isOnline: false, onlineUsers: [] });
+    });
+
+    set({ socket });
   },
 
   disconnectSocket: () => {
-    if (get().socket?.connected) get().socket.disconnect();
+    if (get().socket?.connected) {
+      get().socket.disconnect();
+      set({ socket: null, isOnline: false, onlineUsers: [] });
+    }
   },
 }));
-

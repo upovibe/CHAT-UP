@@ -11,7 +11,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth } = useAuth();
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuth();
+
+  console.log({onlineUsers})
 
   useEffect(() => {
     checkAuth();

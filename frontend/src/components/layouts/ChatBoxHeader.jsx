@@ -18,10 +18,13 @@ import { truncateText } from "@/utils/truncateText";
 import DropdownMenuWrapper from "@/components/layouts/DropdownMenuWrapper";
 import { useFriendRequests } from "@/stores/useFriendRequests";
 import { useBlockFriend } from "@/stores/useBlockFriend";
+import { useAuth } from "@/stores/useAuth";
 
 const ChatBoxHeader = ({ onClose, selectedContact, onProfileClick }) => {
   const { toast } = useToast();
   const { getFriendsList } = useFriendRequests();
+  const { onlineUsers } = useAuth();
+
   const { blockUser, getBlockedFriends } = useBlockFriend();
 
   const handleBlockUser = async (selectedContactId) => {
@@ -111,9 +114,13 @@ const ChatBoxHeader = ({ onClose, selectedContact, onProfileClick }) => {
             {selectedContact?.isOnline && (
               <span className="size-2 rounded-full bg-green-500"></span>
             )}
-            <span className="text-gray-500 text-sm">
-              {selectedContact?.isOnline ? "Active" : "Offline"}
-            </span>
+            <div className="text-gray-500 text-sm">
+              {onlineUsers.includes(selectedContact.id) ? (
+                <span className="text-green-500">Online</span>
+              ) : (
+                "Offline"
+              )}
+            </div>
           </div>
         </div>
       </div>

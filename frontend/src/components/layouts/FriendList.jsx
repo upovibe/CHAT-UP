@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import SkeletonList from "@/components/layouts/SkeletonList";
 import { useFriendRequests } from "@/stores/useFriendRequests";
 import { useBlockFriend } from "@/stores/useBlockFriend";
+import { useAuth } from "@/stores/useAuth";
 import Lottie from "lottie-react";
 import InviteLoading from "@/assets/animations/InviteAnimation.json";
 
@@ -33,6 +34,7 @@ const FriendList = ({
   const { toast } = useToast();
   const [selectedContactId, setSelectedContactId] = useState(null);
   const { friendsList, loading, getFriendsList } = useFriendRequests();
+  const { onlineUsers } = useAuth();
   const { blockUser, getBlockedFriends } = useBlockFriend();
 
   useEffect(() => {
@@ -59,12 +61,21 @@ const FriendList = ({
     }
   };
 
-  const triggerElement = (contact) => (
-    <Avatar>
-      <AvatarImage src={contact?.avatar} alt={contact?.fullName} />
-      <AvatarFallback>{contact?.fullName?.[0]}</AvatarFallback>
-    </Avatar>
-  );
+  const triggerElement = (contact) => {
+    const isContactOnline = onlineUsers.includes(contact.id);
+
+    return (
+      <div className="relative">
+        <Avatar>
+          <AvatarImage src={contact?.avatar} alt={contact?.fullName} />
+          <AvatarFallback>{contact?.fullName?.[0]}</AvatarFallback>
+        </Avatar>
+        {isContactOnline && (
+          <Badge className="absolute top-0 size-3 bg-green-500"></Badge>
+        )}
+      </div>
+    );
+  };
 
   const menuItems = (contact) => [
     {
@@ -103,7 +114,6 @@ const FriendList = ({
     setSelectedContactId(contact.id);
     if (onContactSelect) onContactSelect(contact);
   };
-  
 
   // Function to handle sharing the invite link
   const shareInviteLink = () => {
@@ -175,7 +185,8 @@ const FriendList = ({
                 variant="outline"
                 className="mt-4"
                 onClick={shareInviteLink} // Share invite link
-              ><Share2/>
+              >
+                <Share2 />
                 Share Your Invite Link
               </Button>
               <Lottie

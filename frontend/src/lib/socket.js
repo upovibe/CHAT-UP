@@ -1,8 +1,14 @@
+// lib/socket.js
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5001", {
-  transports: ["websocket"],
-  upgrade: false,
-});
+const BASE_URL = "http://localhost:5001";
 
-export default socket;
+export const initializeSocket = (userId) => {
+  return io(BASE_URL, {
+    query: {
+      userId,
+    },
+    transports: ["websocket"],
+    upgrade: false,
+  });
+};
