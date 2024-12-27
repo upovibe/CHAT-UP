@@ -253,18 +253,18 @@ export const acceptFriendRequest = async (req, res) => {
     friendRequest.status = "accepted";
     await friendRequest.save();
 
-    // Fetch the sender's details (avatar and fullName)
-    const sender = await User.findById(friendRequest.senderId);
-    const senderAvatar = sender?.avatar || ''; // Default to empty string if no avatar is found
-    const senderFullName = sender?.fullName || 'Unknown User'; // Default to "Unknown User" if fullName is not found
+    // Fetch the receiver's details (authenticated user)
+    const receiver = await User.findById(userId); 
+    const receiverFullName = receiver?.fullName || 'Unknown User'; // Default to "Unknown User" if fullName is not found
+    const receiverAvatar = receiver?.avatar || ''; // Default to empty string if no avatar is found
 
     // Send notification to the sender (that their request was accepted)
     await Notification.create({
       userId: friendRequest.senderId, // Sender of the friend request
-      avatar: senderAvatar,  // Include avatar in notification
-      fullName: senderFullName, // Include fullName in notification
+      avatar: receiverAvatar,  // Include receiver's avatar in notification
+      fullName: receiverFullName, // Include receiver's fullName in notification
       type: "friend_request",
-      message: `${senderFullName} has accepted your friend request.`,
+      message: `${receiverFullName} has accepted your friend request.`,
     });
 
     res.status(200).json({
@@ -385,3 +385,4 @@ export const getFriendsList = async (req, res) => {
     });
   }
 };
+

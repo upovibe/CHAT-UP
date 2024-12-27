@@ -29,15 +29,10 @@ const Login = () => {
   
     const { identifier, password } = formData;
   
-    let loginData = { password };
-  
-    if (identifier.includes("@")) {
-      loginData.email = identifier;
-    } else if (/^\d+$/.test(identifier)) {
-      loginData.phoneNumber = identifier;
-    } else {
-      loginData.userName = identifier;
-    }
+    let loginData = {
+      identifier,
+      password,
+    };
   
     try {
       const user = await login(loginData);
@@ -46,13 +41,14 @@ const Login = () => {
         title: "Login Successful",
         description: `Welcome back, ${user.fullName || "User"}!`,
       });
+      // Add redirect logic here
     } catch {
       toast({
         variant: "destructive",
         description: "Invalid Credentials",
       });
     }
-  };  
+  };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 

@@ -17,7 +17,7 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['friend_request', 'message', 'other'], // Add more types as needed
+      enum: ['friend_request', 'message', 'other'],
       required: true,
     },
     message: {
@@ -25,6 +25,10 @@ const notificationSchema = new mongoose.Schema(
       required: true,
     },
     read: {
+      type: Boolean,
+      default: false,
+    },
+    deleted: {
       type: Boolean,
       default: false,
     },

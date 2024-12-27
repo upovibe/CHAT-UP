@@ -1,17 +1,16 @@
 import { axiosInstance } from "@/lib/axios";
 import { create } from "zustand";
-import socket from "@/lib/socket";
 
 export const useNotification = create((set) => ({
   notifications: [],
   isLoading: false,
   error: null,
 
+  // Fetch all notifications
   fetchNotifications: async () => {
     set({ isLoading: true });
     try {
       const response = await axiosInstance.get("/notifications");
-      console.log("Fetched notifications:", response.data.notifications);
       set({ notifications: response.data.notifications, isLoading: false });
     } catch (error) {
       console.error("Error fetching notifications:", error.message);
@@ -19,12 +18,12 @@ export const useNotification = create((set) => ({
     }
   },
 
+  // Create a new notification
   createNotification: async (notificationData) => {
     try {
       const response = await axiosInstance.post("/notifications", notificationData);
-      console.log("Created notification:", response.data.notification);
       set((state) => ({
-        notifications: [response.data.notification, ...state.notifications],
+        notifications: [response.data, ...state.notifications],
       }));
     } catch (error) {
       console.error("Error creating notification:", error.message);
@@ -32,24 +31,44 @@ export const useNotification = create((set) => ({
     }
   },
 
-  subscribeToNotifications: (userId) => {
-    console.log("Subscribing to notifications for user ID:", userId);
-    socket.emit("subscribe", userId);
-
-    socket.on("notification", (notification) => {
-      console.log("Received notification via WebSocket:", notification);
-      set((state) => ({
-        notifications: [notification, ...state.notifications],
-      }));
-    });
-  },
-
+  // Mark all notifications as read
   markAllAsRead: async () => {
     try {
       await axiosInstance.post("/notifications/mark-all-as-read");
-      set({ notifications: [] });
+      set((state) => ({
+        notifications: state.notifications.map((notification) => ({
+          ...notification,
+          read: true,
+        })),
+      }));
     } catch (error) {
       console.error("Error marking notifications as read:", error.message);
+      set({ error: error.message });
+    }
+  },
+
+  // Clear (soft delete) all notifications
+  clearAllNotifications: async () => {
+    try {
+      await axiosInstance.post("/notifications/clear-all");
+      set({ notifications: [] }); // Remove all notifications from state
+    } catch (error) {
+      console.error("Error clearing all notifications:", error.message);
+      set({ error: error.message });
+    }
+  },
+
+  // Clear (soft delete) a specific notification
+  clearNotification: async (notificationId) => {
+    try {
+      await axiosInstance.post("/notifications/clear", { notificationId });
+      set((state) => ({
+        notifications: state.notifications.filter(
+          (notification) => notification._id !== notificationId
+        ),
+      }));
+    } catch (error) {
+      console.error("Error clearing notification:", error.message);
       set({ error: error.message });
     }
   },

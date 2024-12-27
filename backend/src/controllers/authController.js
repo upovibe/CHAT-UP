@@ -102,45 +102,32 @@ export const signup = async (req, res) => {
 
 // Login logic
 export const login = async (req, res) => {
-  const { userName, email, phoneNumber, password } = req.body;
+  const { identifier, password } = req.body;
 
   try {
     let user;
-    if (email) {
-      user = await User.findOne({ email });
-    } else if (userName) {
-      user = await User.findOne({ userName });
-    } else if (phoneNumber) {
-      user = await User.findOne({ phoneNumber });
+    if (identifier.includes("@")) {
+      user = await User.findOne({ email: identifier });
+    } else if (/^\d+$/.test(identifier)) {
+      user = await User.findOne({ phoneNumber: identifier });
+    } else {
+      user = await User.findOne({ userName: identifier });
     }
 
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    
-    if (password) {
-      if (!bcrypt.compareSync(password, user.password)) { 
-        return res.status(400).json({ message: "Invalid credentials" });
-      }
-    }
 
-    // const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    // if (!isPasswordCorrect) {
-    //   return res.status(400).json({ message: "Invalid credentials" });
-    // }
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
     generateToken(user._id, res);
 
     return res.status(200).json({
       message: "Login successful",
-      _id: user._id,
-      fullName: user.fullName,
-      userName: user.userName,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      avatar: user.avatar,
-      bio: user.bio,
-      createdAt: user.createdAt,
+      user,
     });
   } catch (err) {
     console.error("Error during login:", err.message);

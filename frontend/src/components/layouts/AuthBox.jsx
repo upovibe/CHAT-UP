@@ -22,7 +22,7 @@ const AuthBox = () => {
     <div className="flex items-center space-x-4">
       <SearchDialog />
       <Notification />
-      <div className="w-[1px] h-6 bg-black/10"></div>
+      <div className="w-[1px] h-6 bg-black/10 dark:bg-white/10"></div>
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar>
