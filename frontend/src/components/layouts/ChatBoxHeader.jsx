@@ -58,12 +58,6 @@ const ChatBoxHeader = ({ onClose, selectedContact, onProfileClick }) => {
       onClick: () => onProfileClick(selectedContact),
     },
     {
-      label: "Mark as read",
-      icon: <MailCheck size={16} />,
-      className: "lg:hidden",
-      onClick: () => console.log("Mark as read clicked"),
-    },
-    {
       label: "Mute Notification",
       icon: <MessageSquareOff size={16} />,
       onClick: () => console.log("Mute Notification clicked"),
@@ -116,7 +110,7 @@ const ChatBoxHeader = ({ onClose, selectedContact, onProfileClick }) => {
             )}
             <div className="text-gray-500 text-sm">
               {onlineUsers.includes(selectedContact.id) ? (
-                <span className="text-green-500">Online</span>
+                <span className="text-green-500 font-semibold lg:font-bold">Online</span>
               ) : (
                 "Offline"
               )}
@@ -125,9 +119,6 @@ const ChatBoxHeader = ({ onClose, selectedContact, onProfileClick }) => {
         </div>
       </div>
       <div className="flex items-center gap-2 justify-between">
-        <Button className="rounded-full h-9 hidden lg:flex" variant="outline">
-          <Check /> Mark As Read
-        </Button>
         <DropdownMenuWrapper
           className="absolute right-0"
           triggerElement={triggerElement}

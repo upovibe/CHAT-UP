@@ -41,8 +41,7 @@ const Sidebar = ({
   const [activeContent, setActiveContent] = useState(null);
   const { pendingCount, cancelledCount, receivedCount, totalFriends } =
     useFriendRequests();
-  const { blockedFriendsCount } = useBlockFriend();
-
+  // const { blockedFriendsCount } = useBlockFriend();
   const totalRequests = pendingCount + cancelledCount + receivedCount;
 
   const toggleCollapse = () => setIsCollapsed((prev) => !prev);
