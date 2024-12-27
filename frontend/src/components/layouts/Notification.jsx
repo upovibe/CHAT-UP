@@ -28,6 +28,8 @@ const Notification = () => {
     markAllAsRead,
     clearAllNotifications,
     clearNotification,
+    subscribeToNotifications,
+    unsubscribeFromNotifications,
   } = useNotification();
   const { toast } = useToast();
 
@@ -36,8 +38,14 @@ const Notification = () => {
   useEffect(() => {
     if (authUser) {
       fetchNotifications();
+      subscribeToNotifications(authUser._id);
     }
-  }, [authUser, fetchNotifications]);
+
+    return () => {
+      unsubscribeFromNotifications();
+    };
+  }, [authUser, fetchNotifications, subscribeToNotifications, unsubscribeFromNotifications]);
+
 
   const handleMarkAllAsRead = () => {
     markAllAsRead();

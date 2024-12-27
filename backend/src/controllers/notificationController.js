@@ -1,4 +1,5 @@
 import Notification from '../models/notification.js';
+import { getRecieverSocketId, io } from "../lib/socket.js";
 
 // Create a new Notification
 export const createNotification = async (req, res) => {
@@ -12,6 +13,12 @@ export const createNotification = async (req, res) => {
       type,
     });
 
+    // Emit a 'newNotification' event to the user's socket
+    const userSocketId = getRecieverSocketId(userId);
+    if (userSocketId) {
+      io.to(userSocketId).emit('newNotification', notification);
+    }
+
     res.status(201).json(notification);
   } catch (error) {
     console.error('Failed to create notification:', error);
@@ -21,7 +28,7 @@ export const createNotification = async (req, res) => {
 
 // Get all active (non-deleted) notifications for the authenticated user
 export const getNotifications = async (req, res) => {
-  const userId = req.user.id; // Authenticated user's ID
+  const userId = req.user.id;
 
   try {
     const notifications = await Notification.find({ userId, deleted: false }) // Exclude deleted notifications

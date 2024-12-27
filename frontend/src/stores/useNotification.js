@@ -1,10 +1,12 @@
 import { axiosInstance } from "@/lib/axios";
 import { create } from "zustand";
+import { initializeSocket } from "@/lib/socket";
 
-export const useNotification = create((set) => ({
+export const useNotification = create((set, get) => ({
   notifications: [],
   isLoading: false,
   error: null,
+  socket: null,
 
   // Fetch all notifications
   fetchNotifications: async () => {
@@ -70,6 +72,27 @@ export const useNotification = create((set) => ({
     } catch (error) {
       console.error("Error clearing notification:", error.message);
       set({ error: error.message });
+    }
+  },
+
+  // Subscribe to new notifications
+  subscribeToNotifications: (userId) => {
+    const socket = initializeSocket(userId);
+    socket.on("newNotification", (newNotification) => {
+      set((state) => ({
+        notifications: [newNotification, ...state.notifications],
+      }));
+    });
+    set({ socket });
+  },
+
+  // Unsubscribe from new notifications
+  unsubscribeFromNotifications: () => {
+    const socket = get().socket;
+    if (socket) {
+      socket.off("newNotification");
+      socket.disconnect();
+      set({ socket: null });
     }
   },
 }));
