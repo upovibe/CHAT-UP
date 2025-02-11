@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import { app, server, io } from './lib/socket.js';
 
+import path from "path"; 
+
 // Import routes
 import authRoutes from "./routes/authRoute.js";
 import searchRoutes from "./routes/searchRoutes.js";
@@ -37,6 +39,15 @@ app.use("/api/chatmessages", chatMessageRoutes);
 
 // Define the port number the server will listen on
 const PORT = process.env.PORT || 5001;
+const __dirname = path.resolve();
+
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, "../frontend", "dist", "index.html"));
+    });
+}
 
 // Start the server
 server.listen(PORT, () => {
