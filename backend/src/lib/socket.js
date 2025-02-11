@@ -1,6 +1,10 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 // Initialize an Express application
 const app = express();
@@ -11,17 +15,18 @@ const server = http.createServer(app);
 // Create Socket.IO server
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.CLIENT_URL,
         credentials: true,
     },
 });
 
+// Store online users
+const userSocketMap = {};
+
+// Function to get the receiver's socket ID
 export const getRecieverSocketId = (userId) => {
     return userSocketMap[userId];
 };
-
-// Store online users
-const userSocketMap = {};
 
 // Socket.IO connection handling
 io.on("connection", (socket) => {
@@ -30,7 +35,6 @@ io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
     if (userId) userSocketMap[userId] = socket.id;
 
-    // io.emit is used to send events to all the connected clients.
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     socket.on("disconnect", () => {
@@ -41,8 +45,7 @@ io.on("connection", (socket) => {
 
     socket.on("error", (err) => {
         console.error("Socket encountered an error:", err.message);
-      });
-      
+    });
 });
 
 export { app, server, io };
